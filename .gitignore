@@ -26,5 +26,3 @@ build/
 # OS
 .DS_Store
 
-# uv lock (library — consumers pin their own)
-uv.lock
