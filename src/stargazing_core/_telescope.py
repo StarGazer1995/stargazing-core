@@ -6,6 +6,7 @@ Provides pure-math optical calculations — no astropy required.
 from __future__ import annotations
 
 import math
+from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -18,7 +19,7 @@ class TelescopeConfig(BaseModel):
 
     # ── optical ───────────────────────────────────────────────────
     focal_length_mm: float = Field(gt=0, description='Focal length (mm)')
-    aperture_mm: float | None = Field(default=None, gt=0, description='Aperture (mm)')
+    aperture_mm: Optional[float] = Field(default=None, gt=0, description='Aperture (mm)')
     central_obstruction_pct: float = Field(
         default=0, ge=0, le=50, description='Central obstruction (%)'
     )
@@ -26,16 +27,16 @@ class TelescopeConfig(BaseModel):
     barlow_factor: float = Field(default=1.0, gt=0, description='Barlow / extender factor')
 
     # ── camera (optional — pure visual observing when absent) ─────
-    sensor_width_mm: float | None = Field(default=None, gt=0, description='Sensor width (mm)')
-    sensor_height_mm: float | None = Field(default=None, gt=0, description='Sensor height (mm)')
-    sensor_pixel_size_um: float | None = Field(default=None, gt=0, description='Pixel size (µm)')
+    sensor_width_mm: Optional[float] = Field(default=None, gt=0, description='Sensor width (mm)')
+    sensor_height_mm: Optional[float] = Field(default=None, gt=0, description='Sensor height (mm)')
+    sensor_pixel_size_um: Optional[float] = Field(default=None, gt=0, description='Pixel size (µm)')
 
     # ── mount ─────────────────────────────────────────────────────
     mount_type: str = Field(default='equatorial', description='"equatorial" | "altaz"')
     guiding_supported: bool = Field(default=False)
 
     # ── filter ────────────────────────────────────────────────────
-    filter_type: str | None = Field(
+    filter_type: Optional[str] = Field(
         default=None,
         description='Broadband / narrowband filter type',
     )
@@ -48,14 +49,14 @@ class TelescopeConfig(BaseModel):
         return self.focal_length_mm * self.reducer_factor * self.barlow_factor
 
     @property
-    def focal_ratio(self) -> float | None:
+    def focal_ratio(self) -> Optional[float]:
         """Focal ratio (f/).  ``None`` when aperture is unknown."""
         if self.aperture_mm is None or self.aperture_mm <= 0:
             return None
         return self.effective_focal_length_mm / self.aperture_mm
 
     @property
-    def effective_aperture_mm(self) -> float | None:
+    def effective_aperture_mm(self) -> Optional[float]:
         """Clear aperture after obstruction loss."""
         if self.aperture_mm is None:
             return None
@@ -63,7 +64,7 @@ class TelescopeConfig(BaseModel):
         return self.aperture_mm * math.sqrt(1.0 - obstruction_ratio**2)
 
     @property
-    def limiting_magnitude(self) -> float | None:
+    def limiting_magnitude(self) -> Optional[float]:
         """Approximate visual limiting magnitude."""
         if self.aperture_mm is None:
             return None
@@ -91,13 +92,13 @@ class TelescopeOptics(BaseModel):
     """Optical parameters derived from a :class:`TelescopeConfig`."""
 
     effective_focal_length_mm: float
-    fov_width_deg: float | None = None
-    fov_height_deg: float | None = None
-    fov_area_sq_deg: float | None = None
-    focal_ratio: float | None = None
-    limiting_magnitude: float | None = None
-    sampling_arcsec_per_pixel: float | None = None
-    dawes_limit_arcsec: float | None = None
+    fov_width_deg: Optional[float] = None
+    fov_height_deg: Optional[float] = None
+    fov_area_sq_deg: Optional[float] = None
+    focal_ratio: Optional[float] = None
+    limiting_magnitude: Optional[float] = None
+    sampling_arcsec_per_pixel: Optional[float] = None
+    dawes_limit_arcsec: Optional[float] = None
 
     @classmethod
     def compute(cls, config: TelescopeConfig) -> TelescopeOptics:
@@ -136,10 +137,10 @@ def _mk(
     focal: float,
     sw: float,
     sh: float,
-    aperture: float | None = None,
-    pixel: float | None = None,
+    aperture: Optional[float] = None,
+    pixel: Optional[float] = None,
     mount: str = 'equatorial',
-    filter_type: str | None = None,
+    filter_type: Optional[str] = None,
 ) -> TelescopeConfig:
     return TelescopeConfig(
         focal_length_mm=focal,
