@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 import threading
 from importlib import resources
-from typing import Any
+from typing import Any, Optional
 
 # ── Fallback angular sizes by object type ──────────────────────
 # Same values as used by the mcp-stargazing download_data.py script.
@@ -65,7 +65,7 @@ _FALLBACK_SIZES: dict[str, tuple[float, float]] = {
 }
 
 # thread-safe cache
-_catalog_cache: list[dict[str, Any]] | None = None
+_catalog_cache: Optional[list[dict[str, Any]]] = None
 _catalog_lock = threading.Lock()
 
 
@@ -83,14 +83,14 @@ def load_objects() -> list[dict[str, Any]]:
         return _catalog_cache
 
     with _catalog_lock:
-        if _catalog_cache is not None:
+        if _catalog_cache is not None:  # pragma: no cover — thread-safety
             return _catalog_cache
         _catalog_cache = _load_data_resource('objects.json')
 
     return _catalog_cache
 
 
-def get_angular_size_fallback(obj_type: str) -> tuple[float, float] | None:
+def get_angular_size_fallback(obj_type: str) -> Optional[tuple[float, float]]:
     """Return ``(maj_arcmin, min_arcmin)`` fallback for *obj_type*, or ``None``."""
     return _FALLBACK_SIZES.get(obj_type)
 
