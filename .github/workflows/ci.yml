@@ -41,6 +41,6 @@ jobs:
       - name: Check diff-cover (100%)
         if: matrix.python-version == '3.13'
         run: |
-          git fetch origin master
+          git fetch origin +refs/heads/master:refs/remotes/origin/master
           uv pip install diff-cover -q
           uv run diff-cover coverage.xml --compare-branch=origin/master --fail-under=100
