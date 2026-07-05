@@ -76,3 +76,23 @@ def calculate_moon_info(time: Time | datetime) -> dict[str, Any]:
         'elongation': float(elongation.deg),
         'earth_distance': float(moon.distance.to(u.km).value),
     }
+
+
+def get_moon_altaz(
+    observer_location: EarthLocation, dt: datetime
+) -> tuple[float, float]:
+    """Compute the Moon's altitude and azimuth for a specific observer and time.
+
+    Args:
+        observer_location: Observer's EarthLocation.
+        dt: Timezone-aware observation datetime.
+
+    Returns:
+        Tuple of (altitude_deg, azimuth_deg).
+    """
+    from astropy.coordinates import AltAz
+
+    moon = get_body('moon', Time(dt))
+    altaz_frame = AltAz(obstime=Time(dt), location=observer_location)
+    moon_altaz = moon.transform_to(altaz_frame)
+    return float(moon_altaz.alt.deg), float(moon_altaz.az.deg)

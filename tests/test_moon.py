@@ -76,6 +76,20 @@ def test_waning_crescent():
     assert 0.05 < info['illumination'] < 0.3
 
 
+def test_moon_altaz_returns_tuple():
+    """get_moon_altaz returns (alt, az) floats."""
+    from astropy.coordinates import EarthLocation
+    import astropy.units as uu
+    from stargazing_core import get_moon_altaz
+
+    loc = EarthLocation(lat=40.0 * uu.deg, lon=116.0 * uu.deg)
+    alt, az = get_moon_altaz(loc, datetime(2024, 1, 25, 22, 0, tzinfo=pytz.UTC))
+    assert isinstance(alt, float)
+    assert isinstance(az, float)
+    assert -90 <= alt <= 90
+    assert 0 <= az <= 360
+
+
 def test_all_fields_present():
     dt = datetime(2024, 1, 25, 17, 54, tzinfo=pytz.UTC)
     info = calculate_moon_info(dt)
