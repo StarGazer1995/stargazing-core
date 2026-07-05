@@ -6,11 +6,18 @@ and deep-sky catalog loading used by both ``mcp-stargazing`` and
 """
 
 from stargazing_core._catalog import DeepSkyCatalog, load_objects
+from stargazing_core._constellation import identify_constellation
+from stargazing_core._coord import validate_coordinates
+from stargazing_core._filtering import filter_candidates_by_lst, score_deep_sky_objects
+from stargazing_core._geo import GeoBounds, GeoPoint, TimeInfo
+from stargazing_core._moon import calculate_moon_info, get_moon_altaz
+from stargazing_core._planets import get_visible_planets
 from stargazing_core._telescope import (
     TELESCOPE_PRESETS,
     TelescopeConfig,
     TelescopeOptics,
 )
+from stargazing_core._timegrid import find_rise_set_indices, generate_time_grid
 
 __all__ = [
     'TelescopeConfig',
@@ -18,5 +25,17 @@ __all__ = [
     'TELESCOPE_PRESETS',
     'DeepSkyCatalog',
     'load_objects',
+    'GeoPoint',
+    'GeoBounds',
+    'TimeInfo',
+    'validate_coordinates',
+    'calculate_moon_info',
+    'get_moon_altaz',
+    'get_visible_planets',
+    'filter_candidates_by_lst',
+    'score_deep_sky_objects',
+    'identify_constellation',
+    'generate_time_grid',
+    'find_rise_set_indices',
 ]
 __version__ = '0.1.0a1'
