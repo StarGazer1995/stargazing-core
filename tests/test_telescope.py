@@ -117,6 +117,13 @@ def test_compute_optics_via_config_method():
     assert optics == TelescopeOptics.compute(cfg)
 
 
+def test_effective_aperture_none_when_no_aperture():
+    """effective_aperture_mm returns None when aperture is not set."""
+    cfg = TelescopeConfig(focal_length_mm=1000)
+    assert cfg.effective_aperture_mm is None
+    assert cfg.limiting_magnitude is None
+
+
 def test_preset_count():
     """We should have a reasonable number of presets."""
     assert len(TELESCOPE_PRESETS) >= 15

@@ -83,7 +83,7 @@ def load_objects() -> list[dict[str, Any]]:
         return _catalog_cache
 
     with _catalog_lock:
-        if _catalog_cache is not None:
+        if _catalog_cache is not None:  # pragma: no cover — thread-safety
             return _catalog_cache
         _catalog_cache = _load_data_resource('objects.json')
 
