@@ -6,6 +6,8 @@ and deep-sky catalog loading used by both ``mcp-stargazing`` and
 """
 
 from stargazing_core._catalog import DeepSkyCatalog, load_objects
+from stargazing_core._coord import validate_coordinates
+from stargazing_core._geo import GeoBounds, GeoPoint, TimeInfo
 from stargazing_core._telescope import (
     TELESCOPE_PRESETS,
     TelescopeConfig,
@@ -18,5 +20,9 @@ __all__ = [
     'TELESCOPE_PRESETS',
     'DeepSkyCatalog',
     'load_objects',
+    'GeoPoint',
+    'GeoBounds',
+    'TimeInfo',
+    'validate_coordinates',
 ]
 __version__ = '0.1.0a1'
