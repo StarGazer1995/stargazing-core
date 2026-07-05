@@ -85,15 +85,17 @@ def score_deep_sky_objects(
         if obj.get('catalog') == 'Messier':
             score -= 5.0
 
-        scored.append({
-            'name': obj['name'],
-            'type': obj['type'],
-            'magnitude': mag,
-            'altitude': round(alt, 1),
-            'azimuth': round(altaz.az.deg, 1),
-            'catalog': obj.get('catalog', 'Unknown'),
-            'score': score,
-        })
+        scored.append(
+            {
+                'name': obj['name'],
+                'type': obj['type'],
+                'magnitude': mag,
+                'altitude': round(alt, 1),
+                'azimuth': round(altaz.az.deg, 1),
+                'catalog': obj.get('catalog', 'Unknown'),
+                'score': score,
+            }
+        )
 
     scored.sort(key=lambda x: x['score'])
     return scored

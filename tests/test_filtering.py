@@ -47,8 +47,14 @@ def test_score_basic():
     time = Time('2024-01-25T22:00:00')
     moon_coord = SkyCoord(100, 20, unit=u.deg, frame='icrs')
     candidates = [
-        {'name': 'M 42', 'type': 'Neb', 'ra': 83.8, 'dec': -5.4,
-         'magnitude': 4.0, 'catalog': 'Messier'},
+        {
+            'name': 'M 42',
+            'type': 'Neb',
+            'ra': 83.8,
+            'dec': -5.4,
+            'magnitude': 4.0,
+            'catalog': 'Messier',
+        },
     ]
     result = score_deep_sky_objects(candidates, time, loc, moon_coord, 0.99)
     assert len(result) >= 0
@@ -57,8 +63,7 @@ def test_score_basic():
 def test_filter_ra_wraparound():
     """RA near 360° with LST near 0° should work (wrap-around)."""
     objects = [
-        {'name': 'NearPole', 'ra': 359.0, 'dec': 80.0,
-         'magnitude': 5.0, 'catalog': 'NGC'},
+        {'name': 'NearPole', 'ra': 359.0, 'dec': 80.0, 'magnitude': 5.0, 'catalog': 'NGC'},
     ]
     result = filter_candidates_by_lst(objects, lst_deg=1.0)
     assert len(result) == 1
@@ -70,8 +75,7 @@ def test_score_skip_bad_coords():
     time = Time('2024-01-25T22:00:00')
     moon = SkyCoord(180, 0, unit=u.deg, frame='icrs')
     candidates = [
-        {'name': 'Bad', 'ra': 'xxx', 'dec': 'yyy',
-         'magnitude': 5.0, 'catalog': 'NGC'},
+        {'name': 'Bad', 'ra': 'xxx', 'dec': 'yyy', 'magnitude': 5.0, 'catalog': 'NGC'},
     ]
     result = score_deep_sky_objects(candidates, time, loc, moon, 0.5)
     assert len(result) == 0
@@ -84,8 +88,7 @@ def test_score_too_close_to_moon():
     # Place moon at ra=83.8, dec=-5.4 (same as M42)
     moon = SkyCoord(83.8, -5.4, unit=u.deg, frame='icrs')
     candidates = [
-        {'name': 'M 42', 'ra': 83.8, 'dec': -5.4,
-         'magnitude': 4.0, 'catalog': 'Messier'},
+        {'name': 'M 42', 'ra': 83.8, 'dec': -5.4, 'magnitude': 4.0, 'catalog': 'Messier'},
     ]
     result = score_deep_sky_objects(candidates, time, loc, moon, 0.99)
     assert len(result) == 0  # too close to moon
@@ -98,8 +101,7 @@ def test_score_below_horizon_skipped():
     moon = SkyCoord(180, 0, unit=u.deg, frame='icrs')
     # Object at dec=-85° from Greenwich — always low
     candidates = [
-        {'name': 'LowDec', 'ra': 60.0, 'dec': -85.0,
-         'magnitude': 5.0, 'catalog': 'NGC'},
+        {'name': 'LowDec', 'ra': 60.0, 'dec': -85.0, 'magnitude': 5.0, 'catalog': 'NGC'},
     ]
     result = score_deep_sky_objects(candidates, time, loc, moon, 0.1)
     assert len(result) == 0

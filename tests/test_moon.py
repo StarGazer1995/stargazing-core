@@ -78,8 +78,9 @@ def test_waning_crescent():
 
 def test_moon_altaz_returns_tuple():
     """get_moon_altaz returns (alt, az) floats."""
-    from astropy.coordinates import EarthLocation
     import astropy.units as uu
+    from astropy.coordinates import EarthLocation
+
     from stargazing_core import get_moon_altaz
 
     loc = EarthLocation(lat=40.0 * uu.deg, lon=116.0 * uu.deg)

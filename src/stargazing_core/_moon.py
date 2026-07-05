@@ -13,7 +13,7 @@ from typing import Any
 import astropy.units as u
 import numpy as np
 import pytz
-from astropy.coordinates import GeocentricTrueEcliptic, get_body, get_sun
+from astropy.coordinates import AltAz, EarthLocation, GeocentricTrueEcliptic, get_body, get_sun
 from astropy.time import Time
 
 from . import _ephemeris  # noqa: F401 — ensure ephemeris is configured
@@ -78,9 +78,7 @@ def calculate_moon_info(time: Time | datetime) -> dict[str, Any]:
     }
 
 
-def get_moon_altaz(
-    observer_location: EarthLocation, dt: datetime
-) -> tuple[float, float]:
+def get_moon_altaz(observer_location: EarthLocation, dt: datetime) -> tuple[float, float]:
     """Compute the Moon's altitude and azimuth for a specific observer and time.
 
     Args:
@@ -90,8 +88,6 @@ def get_moon_altaz(
     Returns:
         Tuple of (altitude_deg, azimuth_deg).
     """
-    from astropy.coordinates import AltAz
-
     moon = get_body('moon', Time(dt))
     altaz_frame = AltAz(obstime=Time(dt), location=observer_location)
     moon_altaz = moon.transform_to(altaz_frame)
