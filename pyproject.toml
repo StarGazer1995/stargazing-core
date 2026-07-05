@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stargazing-core"
+version = "0.1.0a1"
+description = "Shared astronomical computation for stargazing tools — telescope optics, deep-sky catalog, equipment presets"
+requires-python = ">=3.9"
+authors = [
+    { name = "StarGazer1995" },
+]
+readme = "README.md"
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+dependencies = [
+    "pydantic>=2.0",
+    "numpy>=1.21",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["stargazing_core*"]
+
+[tool.setuptools.package-data]
+"stargazing_core" = ["data/*.json"]
+
+# ── Ruff ──────────────────────────────
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I",      # pyflakes + isort
+    "N",                       # pep8-naming
+    "B",                       # flake8-bugbear
+    "SIM",                     # flake8-simplify
+    "C4",                      # flake8-comprehensions
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+
+[tool.ruff.lint.isort]
+known-first-party = ["stargazing_core"]
+
+# ── pytest ─────────────────────────────
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-v --tb=short"
