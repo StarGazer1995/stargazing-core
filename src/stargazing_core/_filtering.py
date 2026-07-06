@@ -10,7 +10,8 @@ import math
 from typing import Any
 
 import astropy.units as u
-from astropy.coordinates import AltAz, EarthLocation, SkyCoord
+import numpy as np
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_sun
 from astropy.time import Time
 
 from . import _ephemeris  # noqa: F401 — ensure ephemeris is configured
@@ -229,31 +230,68 @@ def match_telescope_targets(
 
     optics = config.compute_optics()
 
-    # ── Stage 1: coarse filtering ──────────────────────────────────
-    lst_deg = time.sidereal_time('mean', longitude=observer.lon).deg
+    # ── Find civil dusk (sun < -6°) via time-grid search ─────────────
+    # Search from 12h before to 36h after to capture the full night
+    # window around the observation time, even if already at night.
+    offsets = np.arange(-12, 36, 0.25)  # 48h in 15-min steps centered on time
+    sun_alts = np.array(
+        [
+            get_sun(time + h * u.hour)
+            .transform_to(AltAz(obstime=time + h * u.hour, location=observer))
+            .alt.deg
+            for h in offsets
+        ]
+    )
+
+    dusk_idx = None
+    dawn_idx = None
+    for i in range(1, len(sun_alts)):
+        # Detect crossing: sun goes from above -6° to below -6° (dusk)
+        if dusk_idx is None and sun_alts[i - 1] > -6.0 and sun_alts[i] <= -6.0:
+            dusk_idx = i
+        # Detect crossing: sun goes from below -6° to above -6° (dawn)
+        elif dusk_idx is not None and sun_alts[i - 1] < -6.0 and sun_alts[i] >= -6.0:
+            dawn_idx = i
+            break
+
+    civil_dusk = time + offsets[dusk_idx] * u.hour if dusk_idx is not None else time
+    civil_dawn = time + offsets[dawn_idx] * u.hour if dawn_idx is not None else time + 12 * u.hour
+    civil_midnight = civil_dusk + (civil_dawn - civil_dusk) / 2.0
+
+    # ── Stage 1: coarse filtering (LST at civil midnight) ───────────
+    lst_deg = civil_midnight.sidereal_time('mean', longitude=observer.lon).deg
     all_objects = load_objects()
     candidates = filter_candidates_by_lst(all_objects, lst_deg)
 
-    # ── Stage 2: moon + alt/az base scoring ────────────────────────
-    moon_info = calculate_moon_info(time)
-    moon_alt, moon_az = get_moon_altaz(observer, time.to_datetime())
+    # ── Stage 2: moon + alt/az base scoring at midnight ─────────────
+    moon_info = calculate_moon_info(civil_midnight)
+    moon_alt, moon_az = get_moon_altaz(observer, civil_midnight.to_datetime())
     moon_coord = SkyCoord(
         moon_az * u.deg,
         moon_alt * u.deg,
         frame='altaz',
-        obstime=time,
+        obstime=civil_midnight,
         location=observer,
     ).icrs
 
     base_scored = score_deep_sky_objects(
         candidates,
-        time,
+        civil_midnight,
         observer,
         moon_coord,
         moon_info['illumination'],
     )
 
-    # ── Stage 3: device-aware scoring ──────────────────────────────
+    # ── Altitude curve: 15-min steps from dusk to dawn ──────────────
+    night_hours = (civil_dawn - civil_dusk).to(u.hour).value
+    n_steps = max(2, int(night_hours / 0.25))
+    curve_times = [civil_dusk + i * 0.25 * u.hour for i in range(n_steps + 1)]
+    curve_frames = [AltAz(obstime=ct, location=observer) for ct in curve_times]
+
+    # ── Stage 3: device-aware scoring at civil dusk ─────────────────
+    dusk_frame = AltAz(obstime=civil_dusk, location=observer)
+    dawn_frame = AltAz(obstime=civil_dawn, location=observer)
+
     fov_w = optics.fov_width_deg
     fov_h = optics.fov_height_deg
     lim_mag = optics.limiting_magnitude
@@ -266,19 +304,39 @@ def match_telescope_targets(
         if lim_mag is not None and mag > lim_mag:
             continue
 
-        # --- find original catalog entry for angular size ---
+        # --- find original catalog entry for angular size and coords ---
         orig = next(
             (o for o in all_objects if o['name'] == obj['name']),
             None,
         )
-        maj = orig.get('angular_size_maj_arcmin') if orig else None
-        min_ = orig.get('angular_size_min_arcmin') if orig else None
+        if orig is None:
+            continue
+        maj = orig.get('angular_size_maj_arcmin')
+        min_ = orig.get('angular_size_min_arcmin')
+
+        # --- compute object coordinate (shared by dawn filter + altitude curve) ---
+        try:
+            coord = SkyCoord(ra=orig['ra'] * u.deg, dec=orig['dec'] * u.deg, frame='icrs')
+        except (ValueError, TypeError, KeyError):
+            continue
+
+        # --- hard filter: visible through the night? ---
+        # Must be above 20° at dawn — otherwise it sets before night ends.
+        dusk_alt_val = coord.transform_to(dusk_frame).alt.deg
+        dawn_alt_val = coord.transform_to(dawn_frame).alt.deg
+        if dawn_alt_val < 20.0:
+            continue
+
         obj_type = obj['type']
 
         # --- scores ---
         fov_fit = _score_fov_fit(maj, fov_w or 0, fov_h or 0)
         sb = _calc_surface_brightness(mag, maj, min_)
         filter_score = _score_filter_match(obj_type, config.filter_type)
+
+        # --- hard filter: FOV too small for imaging ---
+        if maj is not None and fov_fit < 0.1:
+            continue
 
         # Normalize surface brightness: typical range 10–25 mag/arcmin²
         sb_score = 0.0
@@ -291,6 +349,16 @@ def match_telescope_targets(
 
         mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.5
 
+        # Altitude curve: every 15 min from dusk to dawn
+        curve = []
+        for ct, cf in zip(curve_times, curve_frames, strict=True):
+            curve.append(
+                {
+                    'time': ct.utc.unix,
+                    'alt': round(coord.transform_to(cf).alt.deg, 1),
+                }
+            )
+
         results.append(
             {
                 'name': obj['name'],
@@ -300,8 +368,9 @@ def match_telescope_targets(
                 'magnitude': mag,
                 'surface_brightness': round(sb, 2) if sb is not None else None,
                 'angular_size_arcmin': maj,
-                'altitude': obj['altitude'],
-                'azimuth': obj['azimuth'],
+                'altitude': round(dusk_alt_val, 1),  # altitude at dusk
+                'azimuth': obj['azimuth'],  # azimuth at midnight
+                'dawn_altitude': round(dawn_alt_val, 1),  # altitude at dawn
                 'fov_fill_ratio': round(
                     (math.pi * (maj / 2.0 / 60.0) ** 2) / (fov_w * fov_h),
                     4,
@@ -315,8 +384,14 @@ def match_telescope_targets(
                 'suitability_score': round(total * 100, 1),
                 'mosaic_recommended': mosaic_recommended,
                 'catalog': obj.get('catalog', 'Unknown'),
+                'altitude_curve': curve,
+                'observation_time': civil_dusk.isot,
+                'civil_dusk': civil_dusk.isot,
+                'civil_dawn': civil_dawn.isot,
             }
         )
 
-    results.sort(key=lambda x: x['suitability_score'], reverse=True)
+    # Sort by dawn altitude (ascending: lower at dawn = sets sooner = shoot first),
+    # with FOV fit score as tiebreaker.
+    results.sort(key=lambda x: (x['dawn_altitude'], -x['fov_fit_score']))
     return results[:limit]
