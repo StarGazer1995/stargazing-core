@@ -294,6 +294,8 @@ def match_telescope_targets(
         results.append(
             {
                 'name': obj['name'],
+                'ra': orig.get('ra') if orig else None,
+                'dec': orig.get('dec') if orig else None,
                 'type': obj_type,
                 'magnitude': mag,
                 'surface_brightness': round(sb, 2) if sb is not None else None,
