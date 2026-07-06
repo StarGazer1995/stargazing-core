@@ -14,7 +14,11 @@ from stargazing_core._celestial_models import (
 )
 from stargazing_core._constellation import identify_constellation
 from stargazing_core._coord import validate_coordinates
-from stargazing_core._filtering import filter_candidates_by_lst, score_deep_sky_objects
+from stargazing_core._filtering import (
+    filter_candidates_by_lst,
+    match_telescope_targets,
+    score_deep_sky_objects,
+)
 from stargazing_core._geo import GeoBounds, GeoPoint, TimeInfo
 from stargazing_core._moon import calculate_moon_info, get_moon_altaz
 from stargazing_core._pagination import PaginatedResult
@@ -45,6 +49,7 @@ __all__ = [
     'get_moon_altaz',
     'get_visible_planets',
     'filter_candidates_by_lst',
+    'match_telescope_targets',
     'score_deep_sky_objects',
     'identify_constellation',
     'generate_time_grid',
