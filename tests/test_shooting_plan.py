@@ -1,34 +1,12 @@
 """Tests for automatic shooting schedule generation."""
 
-import pytest
-
-from stargazing_core import (
-    ShootingPlan,
-    ShootingSlot,
-    generate_shooting_schedule,
-    match_telescope_targets,
-)
+from stargazing_core import ShootingPlan, ShootingSlot, generate_shooting_schedule
 
 
-@pytest.fixture(scope='session')
-def real_data():
-    """Run match_telescope_targets ONCE and share across all tests."""
-    import astropy.units as u
-    from astropy.coordinates import EarthLocation
-    from astropy.time import Time
-
-    from stargazing_core._telescope import TELESCOPE_PRESETS
-
-    config = TELESCOPE_PRESETS['redcat51-asi2600']
-    observer = EarthLocation(lat=35.0 * u.deg, lon=139.0 * u.deg)
-    time = Time('2024-02-16T22:00:00')  # first quarter moon
-    return match_telescope_targets(config, observer, time, limit=10)
-
-
-def test_generate_shooting_schedule_basic(real_data):
+def test_generate_shooting_schedule_basic(redcat51_japan_feb2024):
     """End-to-end: real match_telescope_targets → shooting plan."""
-    targets = real_data['targets']
-    moon = real_data['moon']
+    targets = redcat51_japan_feb2024['targets']
+    moon = redcat51_japan_feb2024['moon']
     dusk = targets[0]['civil_dusk']
     dawn = targets[0]['civil_dawn']
 
@@ -50,14 +28,14 @@ def test_generate_shooting_schedule_basic(real_data):
         assert slot.start_time < slot.end_time
 
 
-def test_shooting_plan_respects_moon_delay(real_data):
+def test_shooting_plan_respects_moon_delay(redcat51_japan_feb2024):
     """When moon is up at dusk with >30% illumination, delay start."""
-    moon = real_data['moon']
+    moon = redcat51_japan_feb2024['moon']
     assert moon['illumination'] > 0.3 or moon['always_down'], (
         'test assumes first quarter moon is up at dusk'
     )
 
-    targets = real_data['targets']
+    targets = redcat51_japan_feb2024['targets']
     dusk = targets[0]['civil_dusk']
     dawn = targets[0]['civil_dawn']
     plan = generate_shooting_schedule(targets, moon, dusk, dawn)
@@ -74,12 +52,12 @@ def test_shooting_plan_no_dark_time():
     assert len(plan.warnings) >= 1
 
 
-def test_shooting_plan_no_targets(real_data):
+def test_shooting_plan_no_targets(redcat51_japan_feb2024):
     """Empty targets → empty plan."""
-    targets = real_data['targets']
+    targets = redcat51_japan_feb2024['targets']
     dusk = targets[0]['civil_dusk']
     dawn = targets[0]['civil_dawn']
-    moon = real_data['moon']
+    moon = redcat51_japan_feb2024['moon']
 
     plan = generate_shooting_schedule([], moon, dusk, dawn)
     assert isinstance(plan, ShootingPlan)
@@ -87,10 +65,10 @@ def test_shooting_plan_no_targets(real_data):
     assert plan.used_min == 0
 
 
-def test_shooting_plan_fields_complete(real_data):
+def test_shooting_plan_fields_complete(redcat51_japan_feb2024):
     """All fields in ShootingPlan are populated."""
-    targets = real_data['targets']
-    moon = real_data['moon']
+    targets = redcat51_japan_feb2024['targets']
+    moon = redcat51_japan_feb2024['moon']
     dusk = targets[0]['civil_dusk']
     dawn = targets[0]['civil_dawn']
 
@@ -107,10 +85,10 @@ def test_shooting_plan_fields_complete(real_data):
     assert isinstance(plan.warnings, list)
 
 
-def test_shooting_slot_fields_complete(real_data):
+def test_shooting_slot_fields_complete(redcat51_japan_feb2024):
     """All fields in ShootingSlot are populated."""
-    targets = real_data['targets']
-    moon = real_data['moon']
+    targets = redcat51_japan_feb2024['targets']
+    moon = redcat51_japan_feb2024['moon']
     dusk = targets[0]['civil_dusk']
     dawn = targets[0]['civil_dawn']
 
