@@ -314,15 +314,17 @@ def match_telescope_targets(
         maj = orig.get('angular_size_maj_arcmin')
         min_ = orig.get('angular_size_min_arcmin')
 
-        # --- hard filter: visible through the night? ---
-        # Must be above 20° at dawn — otherwise it sets before night ends.
+        # --- compute object coordinate (shared by dawn filter + altitude curve) ---
         try:
             coord = SkyCoord(ra=orig['ra'] * u.deg, dec=orig['dec'] * u.deg, frame='icrs')
-            dusk_alt_val = coord.transform_to(dusk_frame).alt.deg
-            dawn_alt_val = coord.transform_to(dawn_frame).alt.deg
-            if dawn_alt_val < 20.0:
-                continue
         except (ValueError, TypeError, KeyError):
+            continue
+
+        # --- hard filter: visible through the night? ---
+        # Must be above 20° at dawn — otherwise it sets before night ends.
+        dusk_alt_val = coord.transform_to(dusk_frame).alt.deg
+        dawn_alt_val = coord.transform_to(dawn_frame).alt.deg
+        if dawn_alt_val < 20.0:
             continue
 
         obj_type = obj['type']
@@ -349,17 +351,13 @@ def match_telescope_targets(
 
         # Altitude curve: every 15 min from dusk to dawn
         curve = []
-        try:
-            coord = SkyCoord(ra=orig['ra'] * u.deg, dec=orig['dec'] * u.deg, frame='icrs')
-            for ct, cf in zip(curve_times, curve_frames, strict=True):
-                curve.append(
-                    {
-                        'time': ct.utc.unix,
-                        'alt': round(coord.transform_to(cf).alt.deg, 1),
-                    }
-                )
-        except (ValueError, TypeError, KeyError):
-            pass  # nosec — skip altitude curve on coordinate failure
+        for ct, cf in zip(curve_times, curve_frames, strict=True):
+            curve.append(
+                {
+                    'time': ct.utc.unix,
+                    'alt': round(coord.transform_to(cf).alt.deg, 1),
+                }
+            )
 
         results.append(
             {

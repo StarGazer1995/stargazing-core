@@ -295,6 +295,61 @@ def test_match_telescope_targets_skips_orphan_object(monkeypatch):
     assert all('__FAKE_ORPHAN_OBJECT__' not in r['name'] for r in results)
 
 
+def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
+    """When a catalog entry has invalid ra/dec, the coord exception handler skips it."""
+    from stargazing_core._catalog import load_objects as original_load
+    from stargazing_core._filtering import score_deep_sky_objects as original_score
+    from stargazing_core._telescope import TELESCOPE_PRESETS
+
+    bad_name = '__BAD_COORD_OBJ__'
+
+    def _patched_load():
+        objs = list(original_load())
+        objs.append(
+            {
+                'name': bad_name,
+                'ra': 180.0,
+                'dec': 91.0,  # Invalid declination — triggers ValueError in SkyCoord
+                'type': 'galaxy',
+                'magnitude': 8.0,
+                'catalog': 'NGC',
+                'angular_size_maj_arcmin': 10.0,
+            }
+        )
+        return objs
+
+    def _patched_score(candidates, *args, **kwargs):
+        # Remove bad-coord object so original score_deep_sky_objects
+        # doesn't crash on SkyCoord(dec=91) (which is uncaught there).
+        clean = [c for c in candidates if c['name'] != bad_name]
+        results = original_score(clean, *args, **kwargs)
+        # Inject the bad object so it reaches Stage 3 and hits the
+        # coord exception handler we want to cover.
+        results.append(
+            {
+                'name': bad_name,
+                'type': 'galaxy',
+                'magnitude': 8.0,
+                'altitude': 45.0,
+                'azimuth': 90.0,
+                'catalog': 'NGC',
+                'score': 5.0,
+            }
+        )
+        return results
+
+    monkeypatch.setattr('stargazing_core._catalog.load_objects', _patched_load)
+    monkeypatch.setattr('stargazing_core._filtering.score_deep_sky_objects', _patched_score)
+
+    config = TELESCOPE_PRESETS['redcat51-asi2600']
+    observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
+    time = Time('2024-01-25T22:00:00')
+
+    results = match_telescope_targets(config, observer, time, limit=10)
+    # The bad-coord object should be silently skipped via the except handler
+    assert bad_name not in [r['name'] for r in results]
+
+
 def test_match_mosaic_recommended_for_large_target():
     """M31 should get mosaic_recommended=True for a narrow-FOV scope."""
     from stargazing_core._telescope import TELESCOPE_PRESETS
