@@ -371,6 +371,23 @@ def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
     assert bad_name not in [r['name'] for r in result['targets']]
 
 
+def test_match_telescope_targets_moon_sets_during_night():
+    """Moon that sets during the night → always_up=False, dark_fraction > 0."""
+    from stargazing_core._telescope import TELESCOPE_PRESETS
+
+    config = TELESCOPE_PRESETS['redcat51-asi2600']
+    observer = EarthLocation(lat=35.0 * u.deg, lon=139.0 * u.deg)
+    # First quarter moon — rises ~noon, sets ~midnight
+    time = Time('2024-02-16T22:00:00')  # Feb 16 = first quarter
+
+    result = match_telescope_targets(config, observer, time, limit=5)
+    moon = result['moon']
+    assert moon['always_up'] is False, 'first quarter moon should set during the night'
+    assert moon['always_down'] is False, 'first quarter moon should be up at dusk'
+    assert 0.0 < moon['dark_fraction'] < 1.0, 'moon should set partway through the night'
+    assert len(moon['altitude_curve']) > 0
+
+
 def test_match_mosaic_recommended_for_large_target():
     """M31 should get mosaic_recommended=True for a narrow-FOV scope."""
     from stargazing_core._telescope import TELESCOPE_PRESETS
