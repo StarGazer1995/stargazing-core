@@ -201,12 +201,31 @@ def test_match_telescope_targets_basic():
     observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
     time = Time('2024-01-25T22:00:00')
 
-    results = match_telescope_targets(config, observer, time, limit=10)
+    result = match_telescope_targets(config, observer, time, limit=10)
 
-    assert len(results) > 0
-    assert len(results) <= 10
+    assert 'targets' in result
+    assert 'moon' in result
+    targets = result['targets']
+    moon = result['moon']
+    assert len(targets) > 0
+    assert len(targets) <= 10
+
+    # Verify moon fields
+    assert 'illumination' in moon
+    assert 'phase' in moon
+    assert 'altitude_curve' in moon
+    assert 'always_down' in moon
+    assert 'always_up' in moon
+    assert 'dark_fraction' in moon
+    assert 0.0 <= moon['illumination'] <= 1.0
+    assert 0.0 <= moon['dark_fraction'] <= 1.0
+    assert len(moon['altitude_curve']) >= 2
+    assert isinstance(moon['phase'], str)
+    assert isinstance(moon['always_down'], bool)
+    assert isinstance(moon['always_up'], bool)
+
     # Verify structure of first result
-    r = results[0]
+    r = targets[0]
     assert 'name' in r
     assert 'ra' in r
     assert 'dec' in r
@@ -217,7 +236,7 @@ def test_match_telescope_targets_basic():
     assert 'mosaic_recommended' in r
     assert 0 <= r['suitability_score'] <= 100
     # Results sorted by dawn_altitude ascending (lower = sets sooner = first)
-    dawn_alts = [x['dawn_altitude'] for x in results]
+    dawn_alts = [x['dawn_altitude'] for x in targets]
     assert dawn_alts == sorted(dawn_alts)
     assert dawn_alts[0] < dawn_alts[-1], 'first result should set before last'
     # All dawn altitudes above filter threshold
@@ -228,7 +247,7 @@ def test_match_telescope_targets_basic():
         assert key in r, f'missing field: {key}'
 
     # FOV filter: objects with angular_size should have fov_fit_score >= 0.1
-    for x in results:
+    for x in targets:
         if x['angular_size_arcmin'] is not None:
             assert x['fov_fit_score'] >= 0.1, (
                 x['name']
@@ -253,9 +272,11 @@ def test_match_telescope_targets_empty_with_weak_scope():
     observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
     time = Time('2024-01-25T22:00:00')
 
-    results = match_telescope_targets(config, observer, time, limit=20)
+    result = match_telescope_targets(config, observer, time, limit=20)
     # With limiting mag ~7, most DSOs are filtered out
-    assert isinstance(results, list)
+    assert isinstance(result, dict)
+    assert 'targets' in result
+    assert isinstance(result['targets'], list)
 
 
 def test_match_telescope_targets_skips_orphan_object(monkeypatch):
@@ -289,10 +310,10 @@ def test_match_telescope_targets_skips_orphan_object(monkeypatch):
         _patched_score,
     )
 
-    results = match_telescope_targets(config, observer, time, limit=10)
+    result = match_telescope_targets(config, observer, time, limit=10)
     # The fake object should be silently skipped; no crash
-    assert len(results) > 0
-    assert all('__FAKE_ORPHAN_OBJECT__' not in r['name'] for r in results)
+    assert len(result['targets']) > 0
+    assert all('__FAKE_ORPHAN_OBJECT__' not in r['name'] for r in result['targets'])
 
 
 def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
@@ -345,9 +366,9 @@ def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
     observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
     time = Time('2024-01-25T22:00:00')
 
-    results = match_telescope_targets(config, observer, time, limit=10)
+    result = match_telescope_targets(config, observer, time, limit=10)
     # The bad-coord object should be silently skipped via the except handler
-    assert bad_name not in [r['name'] for r in results]
+    assert bad_name not in [r['name'] for r in result['targets']]
 
 
 def test_match_mosaic_recommended_for_large_target():
@@ -359,8 +380,8 @@ def test_match_mosaic_recommended_for_large_target():
     observer = EarthLocation(lat=41.0 * u.deg, lon=-72.0 * u.deg)
     time = Time('2024-11-15T02:00:00')  # M31 is well-placed
 
-    results = match_telescope_targets(config, observer, time, limit=30)
-    m31 = next((r for r in results if 'M 31' in r['name']), None)
+    result = match_telescope_targets(config, observer, time, limit=30)
+    m31 = next((r for r in result['targets'] if 'M 31' in r['name']), None)
 
     if m31 is not None:
         assert m31['mosaic_recommended'] is True
