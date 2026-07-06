@@ -208,6 +208,10 @@ def test_match_telescope_targets_basic():
     # Verify structure of first result
     r = results[0]
     assert 'name' in r
+    assert 'ra' in r
+    assert 'dec' in r
+    assert isinstance(r['ra'], (int, float))
+    assert isinstance(r['dec'], (int, float))
     assert 'suitability_score' in r
     assert 'fov_fit_score' in r
     assert 'mosaic_recommended' in r
