@@ -11,7 +11,7 @@ from typing import Any
 
 import astropy.units as u
 import numpy as np
-from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_sun
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body, get_sun
 from astropy.time import Time
 
 from . import _ephemeris  # noqa: F401 — ensure ephemeris is configured
@@ -212,7 +212,7 @@ def match_telescope_targets(
     observer: EarthLocation,
     time: Time,
     limit: int = 20,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     """Recommend astrophotography targets for a telescope setup.
 
     Args:
@@ -222,7 +222,10 @@ def match_telescope_targets(
         limit: Maximum number of results to return.
 
     Returns:
-        Sorted list of target dicts, best first.
+        Dict with keys:
+        - targets: sorted list of target dicts, best first
+        - moon: dict with illumination, phase, altitude_curve,
+          always_down, always_up, dark_fraction
     """
     # Lazy imports to avoid circular deps at module level
     from ._catalog import load_objects
@@ -282,11 +285,31 @@ def match_telescope_targets(
         moon_info['illumination'],
     )
 
-    # ── Altitude curve: 15-min steps from dusk to dawn ──────────────
+    # ── Altitude curves: 15-min steps from dusk to dawn ──────────────
     night_hours = (civil_dawn - civil_dusk).to(u.hour).value
     n_steps = max(2, int(night_hours / 0.25))
     curve_times = [civil_dusk + i * 0.25 * u.hour for i in range(n_steps + 1)]
     curve_frames = [AltAz(obstime=ct, location=observer) for ct in curve_times]
+
+    # Moon altitude curve over the observation window
+    moon_curve = []
+    moon_always_down = True
+    moon_always_up = True
+    for ct, cf in zip(curve_times, curve_frames, strict=True):
+        moon_alt_t = get_body('moon', ct).transform_to(cf).alt.deg
+        moon_curve.append(
+            {
+                'time': ct.utc.unix,
+                'alt': round(moon_alt_t, 1),
+            }
+        )
+        if moon_alt_t > 0:
+            moon_always_down = False
+        if moon_alt_t <= 0:
+            moon_always_up = False
+    # Fraction of observation window with moon below horizon
+    moon_down_count = sum(1 for p in moon_curve if p['alt'] <= 0)
+    moon_dark_fraction = round(moon_down_count / max(len(moon_curve), 1), 2)
 
     # ── Stage 3: device-aware scoring at civil dusk ─────────────────
     dusk_frame = AltAz(obstime=civil_dusk, location=observer)
@@ -394,4 +417,15 @@ def match_telescope_targets(
     # Sort by dawn altitude (ascending: lower at dawn = sets sooner = shoot first),
     # with FOV fit score as tiebreaker.
     results.sort(key=lambda x: (x['dawn_altitude'], -x['fov_fit_score']))
-    return results[:limit]
+
+    return {
+        'targets': results[:limit],
+        'moon': {
+            'illumination': moon_info['illumination'],
+            'phase': moon_info['phase_name'],
+            'altitude_curve': moon_curve,
+            'always_down': moon_always_down,
+            'always_up': moon_always_up,
+            'dark_fraction': moon_dark_fraction,
+        },
+    }
