@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
+import numpy as np
 from pydantic import BaseModel, Field
 
 
@@ -50,6 +51,7 @@ def generate_shooting_schedule(
     dawn: str,
     min_alt: float = 25.0,
     min_duration_min: int = 30,
+    max_slot_min: int = 720,
 ) -> ShootingPlan:
     """Generate a single-night shooting schedule.
 
@@ -115,71 +117,122 @@ def generate_shooting_schedule(
             '— narrowband recommended'
         )
 
-    # ── Allocate slots ────────────────────────────────────────────────
-    available_start_sec = moon_delay_min * 60  # seconds after dusk
-    available_end_sec = total_dark_sec
-    slots: list[ShootingSlot] = []
-    current_time_sec = available_start_sec
+    # ── Per-minute best-target table + consecutive merge ────────────────
+    available_start_sec = moon_delay_min * 60
+    total_avail_min = total_dark_min - moon_delay_min
+    if total_avail_min <= 0:
+        return ShootingPlan(
+            date=dusk_dt.strftime('%Y-%m-%d'),
+            dusk=dusk,
+            dawn=dawn,
+            moon_phase=moon.get('phase', 'Unknown'),
+            moon_illumination=moon.get('illumination', 0),
+            moon_delay_min=moon_delay_min,
+            slots=[],
+            total_dark_min=total_dark_min,
+            used_min=0,
+            warnings=['Moon up all night — no dark window'],
+        )
 
+    dusk_ts = dusk_dt.timestamp()
+
+    # Pre-compute per-target per-minute score table (numpy vectorised).
+    # Linear interpolation between 15-min curve points via np.interp replaces
+    # the previous fill-forward loop — smoother, more accurate, and fewer LOC.
+    minute_times = dusk_ts + available_start_sec + np.arange(total_avail_min) * 60
+
+    target_info: list[dict] = []
+    score_rows: list[np.ndarray] = []
     for t in targets:
-        if current_time_sec >= available_end_sec:
-            warnings.append(f'Skipped {t["name"]} — dark window exhausted')
-            break
-
         curve = t.get('altitude_curve', [])
         if not curve or len(curve) < 2:
             continue
+        fov_s = (t.get('fov_fit_score', 0) or 0) * 40
+        sb_s = (t.get('surface_brightness_score', 0) or 0) * 30
+        flt_s = (t.get('filter_match_score', 0) or 0) * 20
+        score_static = fov_s + sb_s + flt_s
 
-        # Find the continuous segment where alt > min_alt, starting from
-        # the earliest time where alt crosses above min_alt.
-        slot_start_sec = None
-        slot_end_sec = None
-        dusk_ts = dusk_dt.timestamp()
-        for pt in curve:
-            t_sec = pt['time'] - dusk_ts
-            if t_sec < current_time_sec:
-                continue
-            if pt['alt'] >= min_alt:
-                if slot_start_sec is None:
-                    slot_start_sec = t_sec
-                slot_end_sec = t_sec
-            elif slot_start_sec is not None:
-                # Fell below min_alt — end the window
-                break
+        # Interpolate altitude at every available minute (single np.interp call)
+        curve_times = np.array([p['time'] for p in curve], dtype=np.float64)
+        curve_alts = np.array([p['alt'] for p in curve], dtype=np.float64)
+        alts = np.interp(minute_times, curve_times, curve_alts, left=np.nan, right=np.nan)
 
-        if slot_start_sec is None or slot_end_sec is None:
+        # Altitude score: (alt / 90) * 10, NaN where below min_alt
+        alt_scores = np.where(alts >= min_alt, (alts / 90.0) * 10, np.nan)
+        row = score_static + alt_scores
+
+        if np.any(~np.isnan(row)):
+            score_rows.append(row)
+            target_info.append(
+                {
+                    'target': t,
+                    'name': t['name'],
+                    'curve_times': curve_times,
+                    'curve_alts': curve_alts,
+                }
+            )
+
+    if not score_rows:
+        return ShootingPlan(
+            date=dusk_dt.strftime('%Y-%m-%d'),
+            dusk=dusk,
+            dawn=dawn,
+            moon_phase=moon.get('phase', 'Unknown'),
+            moon_illumination=moon.get('illumination', 0),
+            moon_delay_min=moon_delay_min,
+            slots=[],
+            total_dark_min=total_dark_min,
+            used_min=0,
+            warnings=['No viable imaging windows'],
+        )
+
+    # Vectorised argmax per minute — best target at each minute
+    scores = np.vstack(score_rows)
+    all_nan = np.all(np.isnan(scores), axis=0)
+    best_idx = np.full(total_avail_min, -1)
+    if not np.all(all_nan):
+        best_idx[~all_nan] = np.nanargmax(scores[:, ~all_nan], axis=0)
+
+    # ── Find runs of the same target using numpy diff ──────────────
+    # Detect boundaries where best_idx changes.  Run starts where
+    # best_idx switches TO a valid target; run ends where it switches
+    # AWAY (to another target or to -1).
+    slots: list[ShootingSlot] = []
+    diff_arr = np.diff(best_idx, prepend=-2, append=-2)
+    diff_before = diff_arr[:-1]  # change BEFORE each minute
+    diff_after = diff_arr[1:]  # change AFTER each minute
+    valid_mask = best_idx != -1
+
+    run_starts = np.where((diff_before != 0) & valid_mask)[0]
+    run_ends = np.where((diff_after != 0) & valid_mask)[0]
+
+    for start, run_end in zip(run_starts, run_ends, strict=True):
+        start = int(start)
+        run_end = int(run_end) + 1  # run_ends was the last valid minute (inclusive)
+        cur = int(best_idx[start])
+        run_len = run_end - start
+        if run_len > max_slot_min:
+            run_end = start + max_slot_min
+            run_len = max_slot_min
+        if run_len < min_duration_min:
             continue
-        window_duration = slot_end_sec - slot_start_sec
-        window_min = int(window_duration / 60)
-        if window_min < min_duration_min:
-            continue
 
-        # Don't start before the target is actually above min_alt
-        if current_time_sec < slot_start_sec:
-            current_time_sec = slot_start_sec
+        t = target_info[cur]['target']
+        start_dt = dusk_dt + timedelta(seconds=available_start_sec + start * 60)
+        end_dt = dusk_dt + timedelta(seconds=available_start_sec + run_end * 60)
 
-        # Clamp to remaining dark time
-        remaining_sec = available_end_sec - current_time_sec
-        if window_duration > remaining_sec:
-            window_duration = remaining_sec
-            window_min = int(window_duration / 60)
-            if window_min < min_duration_min:
-                break
-
-        start_dt = dusk_dt + timedelta(seconds=current_time_sec)
-        end_dt = dusk_dt + timedelta(seconds=current_time_sec + window_duration)
-
-        # Find actual alt values at start/end
         start_ts = start_dt.timestamp()
         end_ts = end_dt.timestamp()
-        start_alt = next(
-            (p['alt'] for p in curve if abs(p['time'] - start_ts) < 60),
-            t.get('altitude', 0),
-        )
-        end_alt = next(
-            (p['alt'] for p in reversed(curve) if abs(p['time'] - end_ts) < 60),
-            t.get('dawn_altitude', 0),
-        )
+        # Use pre-computed curve arrays for O(1) np.interp instead of O(n) next()
+        ctimes = target_info[cur]['curve_times']
+        calts = target_info[cur]['curve_alts']
+        start_alt = float(np.interp(start_ts, ctimes, calts, left=np.nan, right=np.nan))
+        end_alt = float(np.interp(end_ts, ctimes, calts, left=np.nan, right=np.nan))
+        # Fall back to stored altitudes when the slot edge lies outside the curve
+        if np.isnan(start_alt):  # pragma: no cover — defensive, slot always in range
+            start_alt = t.get('altitude', 0)
+        if np.isnan(end_alt):
+            end_alt = t.get('dawn_altitude', 0)
 
         notes: list[str] = []
         if t.get('mosaic_recommended'):
@@ -195,15 +248,13 @@ def generate_shooting_schedule(
                 target_type=t['type'],
                 start_alt=round(start_alt, 1),
                 end_alt=round(end_alt, 1),
-                duration_min=window_min,
+                duration_min=run_len,
                 fov_fit_score=t.get('fov_fit_score', 0),
                 suitability_score=t.get('suitability_score', 0),
                 mosaic_recommended=t.get('mosaic_recommended', False),
                 notes=notes,
             )
         )
-
-        current_time_sec += window_duration
 
     used_min = sum(s.duration_min for s in slots)
 
