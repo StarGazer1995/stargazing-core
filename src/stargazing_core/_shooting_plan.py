@@ -50,6 +50,7 @@ def generate_shooting_schedule(
     dawn: str,
     min_alt: float = 25.0,
     min_duration_min: int = 30,
+    max_slot_min: int = 720,
 ) -> ShootingPlan:
     """Generate a single-night shooting schedule.
 
@@ -115,66 +116,121 @@ def generate_shooting_schedule(
             '— narrowband recommended'
         )
 
-    # ── Allocate slots ────────────────────────────────────────────────
-    available_start_sec = moon_delay_min * 60  # seconds after dusk
-    available_end_sec = total_dark_sec
-    slots: list[ShootingSlot] = []
-    current_time_sec = available_start_sec
+    # ── Per-minute best-target table + consecutive merge ────────────────
+    available_start_sec = moon_delay_min * 60
+    total_avail_min = total_dark_min - moon_delay_min
+    if total_avail_min <= 0:
+        return ShootingPlan(
+            date=dusk_dt.strftime('%Y-%m-%d'),
+            dusk=dusk,
+            dawn=dawn,
+            moon_phase=moon.get('phase', 'Unknown'),
+            moon_illumination=moon.get('illumination', 0),
+            moon_delay_min=moon_delay_min,
+            slots=[],
+            total_dark_min=total_dark_min,
+            used_min=0,
+            warnings=['Moon up all night — no dark window'],
+        )
 
+    dusk_ts = dusk_dt.timestamp()
+
+    # Pre-compute per-target per-minute score table
+    # Curve points are 15-min apart; fill gaps so every minute has a score
+    target_minutes: list[dict] = []
     for t in targets:
-        if current_time_sec >= available_end_sec:
-            warnings.append(f'Skipped {t["name"]} — dark window exhausted')
-            break
-
         curve = t.get('altitude_curve', [])
         if not curve or len(curve) < 2:
             continue
+        fov_s = (t.get('fov_fit_score', 0) or 0) * 40
+        sb_s = (t.get('surface_brightness_score', 0) or 0) * 30
+        flt_s = (t.get('filter_match_score', 0) or 0) * 20
+        score_static = fov_s + sb_s + flt_s
 
-        # Find the continuous segment where alt > min_alt, starting from
-        # the earliest time where alt crosses above min_alt.
-        slot_start_sec = None
-        slot_end_sec = None
-        dusk_ts = dusk_dt.timestamp()
-        for pt in curve:
+        minute_score: dict[int, float] = {}
+        for i, pt in enumerate(curve):
             t_sec = pt['time'] - dusk_ts
-            if t_sec < current_time_sec:
+            minute = int((t_sec - available_start_sec) / 60)
+            if not (0 <= minute < total_avail_min):
                 continue
-            if pt['alt'] >= min_alt:
-                if slot_start_sec is None:
-                    slot_start_sec = t_sec
-                slot_end_sec = t_sec
-            elif slot_start_sec is not None:
-                # Fell below min_alt — end the window
-                break
+            if pt['alt'] < min_alt:
+                continue
+            # Fill this minute and up to 14 more (15-min gap to next point)
+            end_minute = total_avail_min
+            if i + 1 < len(curve):
+                next_min = int((curve[i + 1]['time'] - dusk_ts - available_start_sec) / 60)
+                end_minute = min(total_avail_min, next_min)
+            score = score_static + (pt['alt'] / 90) * 10
+            for m in range(minute, min(minute + 15, end_minute)):
+                if m < total_avail_min and (m not in minute_score or score > minute_score[m]):
+                    minute_score[m] = score
 
-        if slot_start_sec is None or slot_end_sec is None:
+        if minute_score:
+            target_minutes.append(
+                {
+                    'target': t,
+                    'scores': minute_score,
+                    'name': t['name'],
+                }
+            )
+
+    if not target_minutes:
+        return ShootingPlan(
+            date=dusk_dt.strftime('%Y-%m-%d'),
+            dusk=dusk,
+            dawn=dawn,
+            moon_phase=moon.get('phase', 'Unknown'),
+            moon_illumination=moon.get('illumination', 0),
+            moon_delay_min=moon_delay_min,
+            slots=[],
+            total_dark_min=total_dark_min,
+            used_min=0,
+            warnings=['No viable imaging windows'],
+        )
+
+    # For each minute, pick the best target
+    schedule: list[int | None] = [None] * total_avail_min  # target index or None
+    for minute in range(total_avail_min):
+        best_score = -1.0
+        best_idx = None
+        for idx, tm in enumerate(target_minutes):
+            s = tm['scores'].get(minute)
+            if s is not None and s > best_score:
+                best_score = s
+                best_idx = idx
+        schedule[minute] = best_idx
+
+    # Merge consecutive minutes of the same target, applying min_duration and max_slot
+    slots: list[ShootingSlot] = []
+    m = 0
+    while m < total_avail_min:
+        cur = schedule[m]
+        if cur is None:
+            m += 1
             continue
-        window_duration = slot_end_sec - slot_start_sec
-        window_min = int(window_duration / 60)
-        if window_min < min_duration_min:
+        # Find run of same target
+        run_end = m
+        while run_end < total_avail_min and schedule[run_end] == cur:
+            run_end += 1
+        run_len = run_end - m
+        # Clamp to max_slot_min
+        if run_len > max_slot_min:
+            run_end = m + max_slot_min
+            run_len = max_slot_min
+        if run_len < min_duration_min:
+            m = run_end
             continue
 
-        # Don't start before the target is actually above min_alt
-        if current_time_sec < slot_start_sec:
-            current_time_sec = slot_start_sec
+        tm = target_minutes[cur]
+        t = tm['target']
+        start_dt = dusk_dt + timedelta(seconds=available_start_sec + m * 60)
+        end_dt = dusk_dt + timedelta(seconds=available_start_sec + run_end * 60)
 
-        # Clamp to remaining dark time
-        remaining_sec = available_end_sec - current_time_sec
-        if window_duration > remaining_sec:
-            window_duration = remaining_sec
-            window_min = int(window_duration / 60)
-            if window_min < min_duration_min:
-                break
-
-        start_dt = dusk_dt + timedelta(seconds=current_time_sec)
-        end_dt = dusk_dt + timedelta(seconds=current_time_sec + window_duration)
-
-        # Find actual alt values at start/end
+        curve = t.get('altitude_curve', [])
         start_ts = start_dt.timestamp()
         end_ts = end_dt.timestamp()
         start_alt = next(
-            (p['alt'] for p in curve if abs(p['time'] - start_ts) < 60),
-            t.get('altitude', 0),
+            (p['alt'] for p in curve if abs(p['time'] - start_ts) < 60), t.get('altitude', 0)
         )
         end_alt = next(
             (p['alt'] for p in reversed(curve) if abs(p['time'] - end_ts) < 60),
@@ -195,15 +251,14 @@ def generate_shooting_schedule(
                 target_type=t['type'],
                 start_alt=round(start_alt, 1),
                 end_alt=round(end_alt, 1),
-                duration_min=window_min,
+                duration_min=run_len,
                 fov_fit_score=t.get('fov_fit_score', 0),
                 suitability_score=t.get('suitability_score', 0),
                 mosaic_recommended=t.get('mosaic_recommended', False),
                 notes=notes,
             )
         )
-
-        current_time_sec += window_duration
+        m = run_end
 
     used_min = sum(s.duration_min for s in slots)
 

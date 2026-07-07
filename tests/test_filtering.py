@@ -229,11 +229,11 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     assert 'fov_fit_score' in r
     assert 'mosaic_recommended' in r
     assert 0 <= r['suitability_score'] <= 100
-    # Results sorted by dawn_altitude ascending (lower = sets sooner = first)
-    dawn_alts = [x['dawn_altitude'] for x in targets]
-    assert dawn_alts == sorted(dawn_alts)
-    assert dawn_alts[0] < dawn_alts[-1], 'first result should set before last'
+    # Results sorted by suitability_score desc, then dawn_altitude asc
+    scores = [x['suitability_score'] for x in targets]
+    assert scores == sorted(scores, reverse=True), 'highest scores first'
     # All dawn altitudes above filter threshold
+    dawn_alts = [x['dawn_altitude'] for x in targets]
     assert all(a >= 20.0 for a in dawn_alts), 'all should pass dawn ≥20° filter'
 
     # Verify new fields present and sane

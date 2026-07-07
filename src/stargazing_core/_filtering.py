@@ -311,6 +311,15 @@ def match_telescope_targets(
     moon_down_count = sum(1 for p in moon_curve if p['alt'] <= 0)
     moon_dark_fraction = round(moon_down_count / max(len(moon_curve), 1), 2)
 
+    # ── Dynamic moon penalty: bright moon above horizon washes out the sky ──
+    # Penalty ∝ illumination × (fraction of night moon is up).
+    if not moon_always_down and moon_info['illumination'] > 0.3:
+        moon_penalty_factor = moon_info['illumination'] * (1 - moon_dark_fraction) * 0.25
+        for obj in base_scored:
+            obj['score'] = obj['score'] + moon_info['illumination'] * 5.0 * (1 - moon_dark_fraction)
+    else:
+        moon_penalty_factor = 0.0
+
     # ── Stage 3: device-aware scoring at civil dusk ─────────────────
     dusk_frame = AltAz(obstime=civil_dusk, location=observer)
     dawn_frame = AltAz(obstime=civil_dawn, location=observer)
@@ -368,7 +377,13 @@ def match_telescope_targets(
 
         alt_score = obj['altitude'] / 90.0
 
-        total = fov_fit * 0.40 + sb_score * 0.30 + filter_score * 0.20 + alt_score * 0.10
+        total = (
+            fov_fit * 0.40
+            + sb_score * 0.30
+            + filter_score * 0.20
+            + alt_score * 0.10
+            - moon_penalty_factor
+        )
 
         mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.5
 
@@ -414,9 +429,9 @@ def match_telescope_targets(
             }
         )
 
-    # Sort by dawn altitude (ascending: lower at dawn = sets sooner = shoot first),
-    # with FOV fit score as tiebreaker.
-    results.sort(key=lambda x: (x['dawn_altitude'], -x['fov_fit_score']))
+    # Sort by suitability (desc) then dawn altitude (asc):
+    # best targets first; among equals, those setting sooner go first.
+    results.sort(key=lambda x: (-x['suitability_score'], x['dawn_altitude']))
 
     return {
         'targets': results[:limit],
