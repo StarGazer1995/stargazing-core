@@ -62,26 +62,24 @@ def filter_candidates_by_lst(
     raw_objects: list[dict[str, Any]], lst_deg: float
 ) -> list[dict[str, Any]]:
     """Filter deep-sky objects to those near the meridian (±8h RA from LST)."""
-    candidates: list[dict[str, Any]] = []
+    n = len(raw_objects)
+    if n == 0:
+        return []
 
-    for obj in raw_objects:
-        mag = obj.get('magnitude', 99.9)
-        catalog = obj.get('catalog', 'Unknown')
+    # Single-pass extract into numpy arrays
+    ra = np.empty(n, dtype=np.float64)
+    mag = np.empty(n, dtype=np.float64)
+    is_ngc = np.empty(n, dtype=bool)
+    for i, obj in enumerate(raw_objects):
+        ra[i] = obj['ra']
+        mag[i] = obj.get('magnitude', 99.9)
+        is_ngc[i] = obj.get('catalog', '') == 'NGC'
 
-        if catalog == 'NGC' and mag > 10.0:
-            continue
+    diff = np.abs(ra - lst_deg)
+    diff = np.where(diff > 180, 360 - diff, diff)
 
-        obj_ra = obj['ra']
-        diff = abs(obj_ra - lst_deg)
-        if diff > 180:
-            diff = 360 - diff
-
-        if diff > 120:  # ~8 hours
-            continue
-
-        candidates.append(obj)
-
-    return candidates
+    keep = (diff <= 120) & ~(is_ngc & (mag > 10.0))
+    return [raw_objects[i] for i in np.flatnonzero(keep)]
 
 
 def score_deep_sky_objects(
@@ -384,6 +382,7 @@ def match_telescope_targets(
             + alt_score * 0.10
             - moon_penalty_factor
         )
+        total = max(total, 0.0)  # moon penalty can't push below zero
 
         mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.5
 
