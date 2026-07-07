@@ -136,7 +136,11 @@ def generate_shooting_schedule(
 
     dusk_ts = dusk_dt.timestamp()
 
-    # Pre-compute per-target per-minute score table (numpy vectorised)
+    # Pre-compute per-target per-minute score table (numpy vectorised).
+    # Linear interpolation between 15-min curve points via np.interp replaces
+    # the previous fill-forward loop — smoother, more accurate, and fewer LOC.
+    minute_times = dusk_ts + available_start_sec + np.arange(total_avail_min) * 60
+
     target_info: list[dict] = []
     score_rows: list[np.ndarray] = []
     for t in targets:
@@ -148,28 +152,25 @@ def generate_shooting_schedule(
         flt_s = (t.get('filter_match_score', 0) or 0) * 20
         score_static = fov_s + sb_s + flt_s
 
-        row = np.full(total_avail_min, np.nan)
-        for i, pt in enumerate(curve):
-            t_sec = pt['time'] - dusk_ts
-            minute = int((t_sec - available_start_sec) / 60)
-            if not (0 <= minute < total_avail_min) or pt['alt'] < min_alt:
-                continue
-            end_minute = total_avail_min
-            if i + 1 < len(curve):
-                end_minute = min(
-                    total_avail_min,
-                    int((curve[i + 1]['time'] - dusk_ts - available_start_sec) / 60),
-                )
-            score = score_static + (pt['alt'] / 90) * 10
-            fill_end = min(minute + 15, end_minute)
-            existing = row[minute:fill_end]
-            row[minute:fill_end] = np.where(
-                np.isnan(existing) | (score > existing), score, existing
-            )
+        # Interpolate altitude at every available minute (single np.interp call)
+        curve_times = np.array([p['time'] for p in curve], dtype=np.float64)
+        curve_alts = np.array([p['alt'] for p in curve], dtype=np.float64)
+        alts = np.interp(minute_times, curve_times, curve_alts, left=np.nan, right=np.nan)
+
+        # Altitude score: (alt / 90) * 10, NaN where below min_alt
+        alt_scores = np.where(alts >= min_alt, (alts / 90.0) * 10, np.nan)
+        row = score_static + alt_scores
 
         if np.any(~np.isnan(row)):
             score_rows.append(row)
-            target_info.append({'target': t, 'name': t['name']})
+            target_info.append(
+                {
+                    'target': t,
+                    'name': t['name'],
+                    'curve_times': curve_times,
+                    'curve_alts': curve_alts,
+                }
+            )
 
     if not score_rows:
         return ShootingPlan(
@@ -192,40 +193,46 @@ def generate_shooting_schedule(
     if not np.all(all_nan):
         best_idx[~all_nan] = np.nanargmax(scores[:, ~all_nan], axis=0)
 
-    # Merge consecutive minutes of the same target, applying min_duration and max_slot
+    # ── Find runs of the same target using numpy diff ──────────────
+    # Detect boundaries where best_idx changes.  Run starts where
+    # best_idx switches TO a valid target; run ends where it switches
+    # AWAY (to another target or to -1).
     slots: list[ShootingSlot] = []
-    m = 0
-    while m < total_avail_min:
-        cur = int(best_idx[m])
-        if cur == -1:
-            m += 1
-            continue
-        # Find run of same target
-        run_end = m
-        while run_end < total_avail_min and int(best_idx[run_end]) == cur:
-            run_end += 1
-        run_len = run_end - m
+    diff_arr = np.diff(best_idx, prepend=-2, append=-2)
+    diff_before = diff_arr[:-1]  # change BEFORE each minute
+    diff_after = diff_arr[1:]  # change AFTER each minute
+    valid_mask = best_idx != -1
+
+    run_starts = np.where((diff_before != 0) & valid_mask)[0]
+    run_ends = np.where((diff_after != 0) & valid_mask)[0]
+
+    for start, run_end in zip(run_starts, run_ends, strict=True):
+        start = int(start)
+        run_end = int(run_end) + 1  # run_ends was the last valid minute (inclusive)
+        cur = int(best_idx[start])
+        run_len = run_end - start
         if run_len > max_slot_min:
-            run_end = m + max_slot_min
+            run_end = start + max_slot_min
             run_len = max_slot_min
         if run_len < min_duration_min:
-            m = run_end
             continue
 
         t = target_info[cur]['target']
-        start_dt = dusk_dt + timedelta(seconds=available_start_sec + m * 60)
+        start_dt = dusk_dt + timedelta(seconds=available_start_sec + start * 60)
         end_dt = dusk_dt + timedelta(seconds=available_start_sec + run_end * 60)
 
-        curve = t.get('altitude_curve', [])
         start_ts = start_dt.timestamp()
         end_ts = end_dt.timestamp()
-        start_alt = next(
-            (p['alt'] for p in curve if abs(p['time'] - start_ts) < 60), t.get('altitude', 0)
-        )
-        end_alt = next(
-            (p['alt'] for p in reversed(curve) if abs(p['time'] - end_ts) < 60),
-            t.get('dawn_altitude', 0),
-        )
+        # Use pre-computed curve arrays for O(1) np.interp instead of O(n) next()
+        ctimes = target_info[cur]['curve_times']
+        calts = target_info[cur]['curve_alts']
+        start_alt = float(np.interp(start_ts, ctimes, calts, left=np.nan, right=np.nan))
+        end_alt = float(np.interp(end_ts, ctimes, calts, left=np.nan, right=np.nan))
+        # Fall back to stored altitudes when the slot edge lies outside the curve
+        if np.isnan(start_alt):
+            start_alt = t.get('altitude', 0)
+        if np.isnan(end_alt):
+            end_alt = t.get('dawn_altitude', 0)
 
         notes: list[str] = []
         if t.get('mosaic_recommended'):
@@ -248,7 +255,6 @@ def generate_shooting_schedule(
                 notes=notes,
             )
         )
-        m = run_end
 
     used_min = sum(s.duration_min for s in slots)
 
