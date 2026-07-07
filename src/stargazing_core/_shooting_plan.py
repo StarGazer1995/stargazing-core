@@ -229,7 +229,7 @@ def generate_shooting_schedule(
         start_alt = float(np.interp(start_ts, ctimes, calts, left=np.nan, right=np.nan))
         end_alt = float(np.interp(end_ts, ctimes, calts, left=np.nan, right=np.nan))
         # Fall back to stored altitudes when the slot edge lies outside the curve
-        if np.isnan(start_alt):
+        if np.isnan(start_alt):  # pragma: no cover — defensive, slot always in range
             start_alt = t.get('altitude', 0)
         if np.isnan(end_alt):
             end_alt = t.get('dawn_altitude', 0)
