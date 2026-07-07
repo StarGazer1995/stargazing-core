@@ -23,6 +23,11 @@ from stargazing_core._geo import GeoBounds, GeoPoint, TimeInfo
 from stargazing_core._moon import calculate_moon_info, get_moon_altaz
 from stargazing_core._pagination import PaginatedResult
 from stargazing_core._planets import get_visible_planets
+from stargazing_core._shooting_plan import (
+    ShootingPlan,
+    ShootingSlot,
+    generate_shooting_schedule,
+)
 from stargazing_core._telescope import (
     TELESCOPE_PRESETS,
     TelescopeConfig,
@@ -54,5 +59,8 @@ __all__ = [
     'identify_constellation',
     'generate_time_grid',
     'find_rise_set_indices',
+    'ShootingPlan',
+    'ShootingSlot',
+    'generate_shooting_schedule',
 ]
 __version__ = '0.1.0a1'

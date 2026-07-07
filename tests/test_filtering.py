@@ -193,15 +193,9 @@ def test_filter_match_unknown_type_fallback():
 # ── End-to-end matching ─────────────────────────────────────────────────
 
 
-def test_match_telescope_targets_basic():
+def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     """End-to-end: RedCat51 preset at Greenwich should return results."""
-    from stargazing_core._telescope import TELESCOPE_PRESETS
-
-    config = TELESCOPE_PRESETS['redcat51-asi2600']
-    observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
-    time = Time('2024-01-25T22:00:00')
-
-    result = match_telescope_targets(config, observer, time, limit=10)
+    result = redcat51_greenwich_jan2024
 
     assert 'targets' in result
     assert 'moon' in result
@@ -371,16 +365,9 @@ def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
     assert bad_name not in [r['name'] for r in result['targets']]
 
 
-def test_match_telescope_targets_moon_sets_during_night():
+def test_match_telescope_targets_moon_sets_during_night(redcat51_japan_feb2024):
     """Moon that sets during the night → always_up=False, dark_fraction > 0."""
-    from stargazing_core._telescope import TELESCOPE_PRESETS
-
-    config = TELESCOPE_PRESETS['redcat51-asi2600']
-    observer = EarthLocation(lat=35.0 * u.deg, lon=139.0 * u.deg)
-    # First quarter moon — rises ~noon, sets ~midnight
-    time = Time('2024-02-16T22:00:00')  # Feb 16 = first quarter
-
-    result = match_telescope_targets(config, observer, time, limit=5)
+    result = redcat51_japan_feb2024
     moon = result['moon']
     assert moon['always_up'] is False, 'first quarter moon should set during the night'
     assert moon['always_down'] is False, 'first quarter moon should be up at dusk'
