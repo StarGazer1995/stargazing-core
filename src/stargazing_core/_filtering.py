@@ -484,7 +484,7 @@ def match_telescope_targets(
         )
         total = max(total, 0.0)  # moon penalty can't push below zero
 
-        mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.5
+        mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.0
 
         results.append(
             {
@@ -495,6 +495,8 @@ def match_telescope_targets(
                 'magnitude': mag,
                 'surface_brightness': round(sb, 2) if sb is not None else None,
                 'angular_size_arcmin': maj,
+                'angular_size_min_arcmin': min_,
+                'angular_size_pa_deg': orig.get('angular_size_pa_deg'),
                 'altitude': round(dusk_alt_val, 1),  # altitude at dusk
                 'azimuth': obj['azimuth'],  # azimuth at midnight
                 'dawn_altitude': round(dawn_alt_val, 1),  # altitude at dawn

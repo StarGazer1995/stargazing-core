@@ -21,6 +21,7 @@ from stargazing_core._filtering import (
 )
 from stargazing_core._geo import GeoBounds, GeoPoint, TimeInfo
 from stargazing_core._moon import calculate_moon_info, get_moon_altaz
+from stargazing_core._mosaic import MosaicGrid, MosaicPanel, compute_mosaic_grid
 from stargazing_core._pagination import PaginatedResult
 from stargazing_core._planets import get_visible_planets
 from stargazing_core._shooting_plan import (
@@ -62,5 +63,8 @@ __all__ = [
     'ShootingPlan',
     'ShootingSlot',
     'generate_shooting_schedule',
+    'MosaicPanel',
+    'MosaicGrid',
+    'compute_mosaic_grid',
 ]
 __version__ = '0.1.0a1'

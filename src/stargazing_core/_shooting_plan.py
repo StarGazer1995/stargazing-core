@@ -8,9 +8,12 @@ windows, altitude curves, and target quality.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import numpy as np
 from pydantic import BaseModel, Field
+
+from stargazing_core._mosaic import MosaicPanel
 
 
 class ShootingSlot(BaseModel):
@@ -26,6 +29,7 @@ class ShootingSlot(BaseModel):
     fov_fit_score: float = Field(ge=0, le=1)
     suitability_score: float = Field(ge=0, le=100)
     mosaic_recommended: bool = False
+    mosaic_panel: Optional[MosaicPanel] = None
     notes: list[str] = Field(default_factory=list)
 
 
