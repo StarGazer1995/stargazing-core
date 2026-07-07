@@ -67,4 +67,4 @@ __all__ = [
     'MosaicGrid',
     'compute_mosaic_grid',
 ]
-__version__ = '0.1.0a1'
+__version__ = '0.1.0'
