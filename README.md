@@ -1,5 +1,8 @@
 # stargazing-core
 
+[![PyPI version](https://img.shields.io/pypi/v/stargazing-core)](https://pypi.org/project/stargazing-core/)
+[![Python](https://img.shields.io/pypi/pyversions/stargazing-core)](https://pypi.org/project/stargazing-core/)
+
 Shared astronomical computation package for the stargazing toolchain —
 telescope optics, deep-sky catalog, and equipment presets used by both
 [mcp-stargazing](https://github.com/StarGazer1995/mcp-stargazing) and
@@ -52,6 +55,41 @@ print(f'FOV: {optics.fov_width_deg:.1f}° × {optics.fov_height_deg:.1f}°')
 |---------|-------|
 | [mcp-stargazing](https://github.com/StarGazer1995/mcp-stargazing) | `get_telescope_targets`, `get_shooting_plan` tools; shared CelestialPosition/RiseSet/MoonInfo models |
 | [stargazing-place-finder](https://github.com/StarGazer1995/stargazing-place-finder) | TelescopeConfig, GeoPoint, telescope target matching endpoint |
+
+## Public API
+
+All symbols are importable from the top-level package:
+
+```python
+from stargazing_core import (
+    # Telescope
+    TelescopeConfig, TelescopeOptics, TELESCOPE_PRESETS,
+    # Deep-sky matching
+    DeepSkyCatalog, load_objects,
+    match_telescope_targets, filter_candidates_by_lst, score_deep_sky_objects,
+    # Shooting plan
+    ShootingPlan, ShootingSlot, generate_shooting_schedule,
+    # Mosaic
+    MosaicPanel, MosaicGrid, compute_mosaic_grid,
+    # Celestial models
+    CelestialPosition, RiseSet, MoonInfo, VisiblePlanet,
+    # Astronomy
+    calculate_moon_info, get_moon_altaz, get_visible_planets, identify_constellation,
+    # Geometry
+    GeoPoint, GeoBounds, TimeInfo, validate_coordinates,
+    # Time grid
+    generate_time_grid, find_rise_set_indices,
+    # Pagination
+    PaginatedResult,
+)
+```
+
+## Compatibility
+
+| Consumer | Min version | Status |
+|----------|-------------|--------|
+| [mcp-stargazing](https://github.com/StarGazer1995/mcp-stargazing) | `>=0.1.0` | ✅ Active |
+| [stargazing-place-finder](https://github.com/StarGazer1995/stargazing-place-finder) | `>=0.1.0` | ✅ Active |
 
 ## Release
 
