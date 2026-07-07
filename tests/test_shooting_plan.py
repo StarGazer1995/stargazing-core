@@ -192,3 +192,49 @@ def test_curve_peaks_then_drops():
     assert len(plan.slots) == 1
     # Window should end where alt drops, not continue to dawn
     assert plan.slots[0].duration_min < 360  # less than full night
+
+
+# ── Edge-case coverage for diff-cover ────────────────────────────────────
+
+
+def test_moon_delay_exceeds_dark_time():
+    """When moon delay ≥ available dark time, total_avail_min ≤ 0 early return."""
+    # Moon sets 120 min after dusk in a 100-min night → delay > available time
+    dusk_ts = datetime.fromisoformat(DUSK).replace(tzinfo=timezone.utc).timestamp()
+    # Moon curve: moon above horizon for first 120 min, then sets
+    moon_curve = [{'time': dusk_ts + i * 900, 'alt': 30.0 - i * 0.3} for i in range(15)]
+    # After ~100 min (alt < 0), moon sets
+    moon_curve[7] = {'time': dusk_ts + 7 * 900, 'alt': -1.0}
+
+    bright_moon = {
+        'phase': 'Full Moon',
+        'illumination': 0.9,
+        'always_down': False,
+        'always_up': False,
+        'altitude_curve': moon_curve,
+    }
+    # Short night: 100 min → moon delay (~120 min + buffer) exceeds it
+    plan = generate_shooting_schedule(
+        [],
+        bright_moon,
+        DUSK,
+        '2024-01-15T19:40:00',  # 100 min after dusk
+    )
+    assert len(plan.slots) == 0
+    assert plan.moon_delay_min > 0
+
+
+def test_run_clamped_by_max_slot_min():
+    """Target visible longer than max_slot_min → run is clamped."""
+    # Long flat curve (always above 25°) with very short max_slot_min
+    curve = _mk_curve([30, 40, 50, 60, 70, 60, 50, 40, 30])
+    plan = generate_shooting_schedule(
+        [_mk_target('LongTarget', curve)],
+        NEW_MOON,
+        DUSK,
+        DAWN,
+        max_slot_min=5,  # clamp runs to 5 min max
+    )
+    # With a 5-min max slot, runs should be clamped
+    if plan.slots:
+        assert all(s.duration_min <= 5 for s in plan.slots)

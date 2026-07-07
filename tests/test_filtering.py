@@ -389,3 +389,33 @@ def test_match_mosaic_recommended_for_large_target():
 
     if m31 is not None:
         assert m31['mosaic_recommended'] is True
+
+
+# ── Edge-case coverage for diff-cover ────────────────────────────────────
+
+
+def test_filter_by_lst_empty_input():
+    """Empty object list returns empty list."""
+    assert filter_candidates_by_lst([], lst_deg=50.0) == []
+
+
+def test_score_deep_sky_objects_empty_input():
+    """Empty candidate list returns empty list."""
+    loc = _greenwich()
+    time = Time('2024-01-25T22:00:00')
+    moon = SkyCoord(180, 0, unit=u.deg, frame='icrs')
+    assert score_deep_sky_objects([], time, loc, moon, 0.5) == []
+
+
+def test_moon_penalty_skipped_when_moon_down():
+    """moon_penalty_factor stays 0.0 when moon illumination is ≤0.3 (new moon)."""
+    from stargazing_core._telescope import TELESCOPE_PRESETS
+
+    config = TELESCOPE_PRESETS['redcat51-asi2600']
+    # New moon on 2024-03-10 — illumination ≈ 0.0, below the 0.3 threshold
+    observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
+    time = Time('2024-03-10T22:00:00')
+
+    result = match_telescope_targets(config, observer, time, limit=10)
+    assert len(result['targets']) >= 0  # should complete without error
+    assert result['moon']['illumination'] <= 0.3

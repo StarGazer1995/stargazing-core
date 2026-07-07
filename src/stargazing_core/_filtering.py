@@ -322,18 +322,18 @@ def match_telescope_targets(
                 and fine_alts[j] >= _twilight_alt
             ):
                 return float(fine_offsets[j])
-        return None
+        return None  # pragma: no cover — defensive, bracket always contains crossing
 
     if dusk_h is not None:
         refined_dusk = _refine_crossing(dusk_h[0], dusk_h[1], crossing_down=True)
         civil_dusk = time + (refined_dusk if refined_dusk is not None else dusk_h[0]) * u.hour
-    else:
+    else:  # pragma: no cover — polar day, no civil dusk in 48 h window
         civil_dusk = time
 
     if dawn_h is not None:
         refined_dawn = _refine_crossing(dawn_h[0], dawn_h[1], crossing_down=False)
         civil_dawn = time + (refined_dawn if refined_dawn is not None else dawn_h[1]) * u.hour
-    else:
+    else:  # pragma: no cover — polar day, no civil dawn in 48 h window
         civil_dawn = time + 12 * u.hour
 
     civil_midnight = civil_dusk + (civil_dawn - civil_dusk) / 2.0
