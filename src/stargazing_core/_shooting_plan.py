@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
+import numpy as np
 from pydantic import BaseModel, Field
 
 
@@ -135,9 +136,9 @@ def generate_shooting_schedule(
 
     dusk_ts = dusk_dt.timestamp()
 
-    # Pre-compute per-target per-minute score table
-    # Curve points are 15-min apart; fill gaps so every minute has a score
-    target_minutes: list[dict] = []
+    # Pre-compute per-target per-minute score table (numpy vectorised)
+    target_info: list[dict] = []
+    score_rows: list[np.ndarray] = []
     for t in targets:
         curve = t.get('altitude_curve', [])
         if not curve or len(curve) < 2:
@@ -147,34 +148,30 @@ def generate_shooting_schedule(
         flt_s = (t.get('filter_match_score', 0) or 0) * 20
         score_static = fov_s + sb_s + flt_s
 
-        minute_score: dict[int, float] = {}
+        row = np.full(total_avail_min, np.nan)
         for i, pt in enumerate(curve):
             t_sec = pt['time'] - dusk_ts
             minute = int((t_sec - available_start_sec) / 60)
-            if not (0 <= minute < total_avail_min):
+            if not (0 <= minute < total_avail_min) or pt['alt'] < min_alt:
                 continue
-            if pt['alt'] < min_alt:
-                continue
-            # Fill this minute and up to 14 more (15-min gap to next point)
             end_minute = total_avail_min
             if i + 1 < len(curve):
-                next_min = int((curve[i + 1]['time'] - dusk_ts - available_start_sec) / 60)
-                end_minute = min(total_avail_min, next_min)
+                end_minute = min(
+                    total_avail_min,
+                    int((curve[i + 1]['time'] - dusk_ts - available_start_sec) / 60),
+                )
             score = score_static + (pt['alt'] / 90) * 10
-            for m in range(minute, min(minute + 15, end_minute)):
-                if m < total_avail_min and (m not in minute_score or score > minute_score[m]):
-                    minute_score[m] = score
-
-        if minute_score:
-            target_minutes.append(
-                {
-                    'target': t,
-                    'scores': minute_score,
-                    'name': t['name'],
-                }
+            fill_end = min(minute + 15, end_minute)
+            existing = row[minute:fill_end]
+            row[minute:fill_end] = np.where(
+                np.isnan(existing) | (score > existing), score, existing
             )
 
-    if not target_minutes:
+        if np.any(~np.isnan(row)):
+            score_rows.append(row)
+            target_info.append({'target': t, 'name': t['name']})
+
+    if not score_rows:
         return ShootingPlan(
             date=dusk_dt.strftime('%Y-%m-%d'),
             dusk=dusk,
@@ -188,32 +185,26 @@ def generate_shooting_schedule(
             warnings=['No viable imaging windows'],
         )
 
-    # For each minute, pick the best target
-    schedule: list[int | None] = [None] * total_avail_min  # target index or None
-    for minute in range(total_avail_min):
-        best_score = -1.0
-        best_idx = None
-        for idx, tm in enumerate(target_minutes):
-            s = tm['scores'].get(minute)
-            if s is not None and s > best_score:
-                best_score = s
-                best_idx = idx
-        schedule[minute] = best_idx
+    # Vectorised argmax per minute — best target at each minute
+    scores = np.vstack(score_rows)
+    all_nan = np.all(np.isnan(scores), axis=0)
+    best_idx = np.full(total_avail_min, -1)
+    if not np.all(all_nan):
+        best_idx[~all_nan] = np.nanargmax(scores[:, ~all_nan], axis=0)
 
     # Merge consecutive minutes of the same target, applying min_duration and max_slot
     slots: list[ShootingSlot] = []
     m = 0
     while m < total_avail_min:
-        cur = schedule[m]
-        if cur is None:
+        cur = int(best_idx[m])
+        if cur == -1:
             m += 1
             continue
         # Find run of same target
         run_end = m
-        while run_end < total_avail_min and schedule[run_end] == cur:
+        while run_end < total_avail_min and int(best_idx[run_end]) == cur:
             run_end += 1
         run_len = run_end - m
-        # Clamp to max_slot_min
         if run_len > max_slot_min:
             run_end = m + max_slot_min
             run_len = max_slot_min
@@ -221,8 +212,7 @@ def generate_shooting_schedule(
             m = run_end
             continue
 
-        tm = target_minutes[cur]
-        t = tm['target']
+        t = target_info[cur]['target']
         start_dt = dusk_dt + timedelta(seconds=available_start_sec + m * 60)
         end_dt = dusk_dt + timedelta(seconds=available_start_sec + run_end * 60)
 
