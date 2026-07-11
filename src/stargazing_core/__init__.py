@@ -35,6 +35,15 @@ from stargazing_core._telescope import (
     TelescopeOptics,
 )
 from stargazing_core._timegrid import find_rise_set_indices, generate_time_grid
+from stargazing_core._weather import (
+    OmWeatherReader,
+    WeatherModel,
+    WeatherTileCache,
+    WeatherVariable,
+    get_colormap,
+    render_weather_tile,
+    weather_tile_bounds,
+)
 
 __all__ = [
     'TelescopeConfig',
@@ -66,5 +75,12 @@ __all__ = [
     'MosaicPanel',
     'MosaicGrid',
     'compute_mosaic_grid',
+    'OmWeatherReader',
+    'WeatherModel',
+    'WeatherTileCache',
+    'WeatherVariable',
+    'get_colormap',
+    'render_weather_tile',
+    'weather_tile_bounds',
 ]
 __version__ = '0.1.0'
