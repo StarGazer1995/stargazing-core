@@ -653,10 +653,10 @@ class OmWeatherReader:
             req = urllib.request.Request(url)
             with urllib.request.urlopen(req, timeout=self._timeout) as resp:
                 body = resp.read()
-        except urllib.error.URLError as exc:
-            raise OSError(f'Failed to fetch metadata from {url}: {exc}') from exc
         except urllib.error.HTTPError as exc:
             raise OSError(f'HTTP {exc.code} fetching metadata from {url}') from exc
+        except urllib.error.URLError as exc:
+            raise OSError(f'Failed to fetch metadata from {url}: {exc}') from exc
 
         try:
             metadata = json.loads(body)

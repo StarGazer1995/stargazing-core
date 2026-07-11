@@ -214,6 +214,20 @@ class TestNormaliseForColormap:
         result = _normalise_for_colormap(data, WeatherVariable.TEMPERATURE_2M)
         assert result[0, 0] == 0.5
 
+    def test_unregistered_normaliser_fallback(self):
+        """A variable with no registered normaliser falls back to cloud."""
+        from stargazing_core._weather import _NORMALISERS
+
+        saved = _NORMALISERS.pop(WeatherVariable.CAPE, None)
+        try:
+            data = np.array([[500.0]], dtype=np.float32)
+            result = _normalise_for_colormap(data, WeatherVariable.CAPE)
+            # CAPE 500 J/kg → fallback treats as cloud % → 500/100 clipped to 1.0
+            assert result[0, 0] == 1.0
+        finally:
+            if saved is not None:
+                _NORMALISERS[WeatherVariable.CAPE] = saved
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # render_weather_tile
