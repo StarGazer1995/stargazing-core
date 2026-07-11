@@ -816,6 +816,116 @@ class TestOmWeatherReaderReadWindow:
             )
             assert isinstance(data, np.ndarray)
 
+    def test_read_window_3d_grid_raises(self):
+        """A 3-D grid should raise ValueError."""
+        reader = self._make_reader()
+        mock_child = _make_mock_om_child(is_array=True, shape=(10, 20, 30))
+        mock_om = _make_mock_om_reader_with_child(mock_child)
+
+        with (
+            mock.patch('fsspec.open', return_value=mock_om),
+            mock.patch('stargazing_core._weather._OmFileReader', return_value=mock_om),
+            pytest.raises(ValueError, match='Expected 2-D'),
+        ):
+            reader.read_window(
+                WeatherVariable.CLOUD_COVER,
+                north=50,
+                south=40,
+                east=10,
+                west=0,
+            )
+
+    def test_read_window_read_array_oserror(self):
+        """read_array raising an exception should be wrapped in OSError."""
+        reader = self._make_reader()
+        mock_child = _make_mock_om_child()
+        mock_child.read_array.side_effect = RuntimeError('chunk decode error')
+        mock_om = _make_mock_om_reader_with_child(mock_child)
+
+        with (
+            mock.patch('fsspec.open', return_value=mock_om),
+            mock.patch('stargazing_core._weather._OmFileReader', return_value=mock_om),
+            pytest.raises(OSError, match='Failed to read data window'),
+        ):
+            reader.read_window(
+                WeatherVariable.CLOUD_COVER,
+                north=50,
+                south=40,
+                east=10,
+                west=0,
+            )
+
+    def test_read_window_lon_wrap_read_oserror(self):
+        """read_array raising in lon-wrapped mode should be OSError."""
+        reader = self._make_reader()
+        mock_child = _make_mock_om_child(shape=(1801, 3600))
+        mock_child.read_array.side_effect = RuntimeError('chunk error')
+        mock_om = _make_mock_om_reader_with_child(mock_child)
+
+        with (
+            mock.patch('fsspec.open', return_value=mock_om),
+            mock.patch('stargazing_core._weather._OmFileReader', return_value=mock_om),
+            pytest.raises(OSError, match='Failed to read lon-wrapped window'),
+        ):
+            reader.read_window(
+                WeatherVariable.CLOUD_COVER,
+                north=50,
+                south=48,
+                east=2,
+                west=-2,  # crosses 0°
+            )
+
+    def test_open_om_file_https_fallback(self):
+        """When s3fs is unavailable, fall back to HTTPS download."""
+        reader = self._make_reader()
+
+        mock_child = _make_mock_om_child(read_array_data=np.full((10, 10), 50.0, dtype=np.float32))
+        mock_om = _make_mock_om_reader_with_child(mock_child)
+
+        def _fake_open_fail(uri, mode=None, s3=None, blockcache=None):
+            raise ImportError('No module named s3fs')
+
+        with (
+            mock.patch('fsspec.open', side_effect=_fake_open_fail),
+            mock.patch(
+                'urllib.request.urlretrieve',
+                return_value=None,
+            ) as mock_retrieve,
+            mock.patch(
+                'stargazing_core._weather._OmFileReader.from_path',
+                return_value=mock_om,
+            ),
+            mock.patch('os.path.exists', return_value=False),
+            mock.patch('os.makedirs'),
+        ):
+            data = reader.read_window(
+                WeatherVariable.CLOUD_COVER,
+                north=50,
+                south=40,
+                east=10,
+                west=0,
+            )
+            assert isinstance(data, np.ndarray)
+            mock_retrieve.assert_called_once()
+
+    def test_read_point_empty_data(self):
+        """read_point with an empty array should return NaN."""
+        reader = self._make_reader()
+        mock_child = _make_mock_om_child(read_array_data=np.array([[]], dtype=np.float32))
+        mock_child.shape = (1801, 3600)
+        mock_om = _make_mock_om_reader_with_child(mock_child)
+
+        with (
+            mock.patch('fsspec.open', return_value=mock_om),
+            mock.patch('stargazing_core._weather._OmFileReader', return_value=mock_om),
+        ):
+            result = reader.read_point(
+                WeatherVariable.CLOUD_COVER,
+                lat=90,
+                lon=0,
+            )
+            assert math.isnan(result)
+
 
 def _make_mock_om_reader_with_child(mock_child):
     """Helper: create an OM reader mock with a specific child variable."""
