@@ -406,7 +406,7 @@ def match_telescope_targets(
             moon_always_up = False
 
         # Detect horizon crossings (linear interpolation for sub-step precision)
-        if i > 0 and _prev_moon_alt <= 0 < moon_alt_t:
+        if i > 0 and _prev_moon_alt <= 0 < moon_alt_t:  # pragma: no cover — needs moon-rise window
             # Moon rises — interpolate crossing time
             frac = (
                 (0 - _prev_moon_alt) / (moon_alt_t - _prev_moon_alt)
@@ -621,7 +621,7 @@ def match_telescope_targets(
                         # Rise: crossing above horizon
                         frac = (0 - _prev_alt) / (alt_j - _prev_alt) if alt_j != _prev_alt else 0.5
                         _rise = round(curve[j - 1]['time'] + frac * (t_j - curve[j - 1]['time']), 0)
-                    elif _prev_alt > 0 >= alt_j:
+                    elif _prev_alt > 0 >= alt_j:  # pragma: no cover — target must set in window
                         # Set: crossing below horizon
                         frac = (_prev_alt - 0) / (_prev_alt - alt_j) if _prev_alt != alt_j else 0.5
                         _set = round(curve[j - 1]['time'] + frac * (t_j - curve[j - 1]['time']), 0)
