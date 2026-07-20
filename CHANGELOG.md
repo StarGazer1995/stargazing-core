@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.0 (2026-07-20) — Surface brightness precision & rise/set semantics
+
+### Added
+
+- **Elliptical FOV scoring**: `_score_fov_fit()` now uses ellipse area (π × a × b) instead of circular, for more accurate FOV-fit scores on elongated galaxies
+- **`optimal_rotation_deg`**: Computed from PA to align camera sensor long side with target major axis
+- **Explicit rise/set/transit**: `rise_time`, `set_time`, `transit_time`, `transit_alt` on every target — no more inferring direction from altitude curves
+- **`moonrise`/`moonset`**: Explicit horizon-crossing timestamps in moon response and `MoonInfo` model
+- **Angular size fallbacks**: Added `err`, `?`, empty-type fallback entries — 100% catalog coverage (was 99.3%)
+
+### Changed
+
+- `_score_fov_fit()` signature: `(maj_arcmin, min_arcmin, fov_w, fov_h)` — second arg added
+- `fov_fill_ratio` now uses ellipse area instead of circular
+- `mosaic_recommended` now checks both major and minor axes against FOV
+- `_shooting_plan.py` uses explicit `moon['moonset']` instead of scanning altitude curve
+- Weather normalisers return `(normalised, valid_mask)` tuple — eliminates double `isnan`
+
+### Fixed
+
+- **#72**: Merged `valid` computation into weather normalisers (removed TODO)
+
 ## 0.1.0 (2026-07-07) — First stable release
 
 ### Added

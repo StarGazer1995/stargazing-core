@@ -210,24 +210,31 @@ def _calc_surface_brightness(
 
 
 def _score_fov_fit(
-    obj_size_arcmin: float | None,
+    maj_arcmin: float | None,
+    min_arcmin: float | None,
     fov_width_deg: float,
     fov_height_deg: float,
 ) -> float:
     """Score how well an object fits in the FOV (0.0–1.0).
 
+    Uses ellipse area (π × a × b) when both axes are available, falling
+    back to circular approximation from maj_arcmin alone.
+
     - < 1% fill → near 0 (too small for detail)
     - 10%–60% fill → 1.0 (ideal)
     - > 60% fill → stays at 1.0 (Phase 4 mosaic handles large targets)
     """
-    if obj_size_arcmin is None or obj_size_arcmin <= 0:
+    if maj_arcmin is None or maj_arcmin <= 0:
         return 0.0
 
     fov_area_sq_deg = fov_width_deg * fov_height_deg
     if fov_area_sq_deg <= 0:
         return 0.0
 
-    obj_area_sq_deg = math.pi * (obj_size_arcmin / 2.0 / 60.0) ** 2
+    # Semi-axes in degrees
+    a_deg = maj_arcmin / 2.0 / 60.0
+    b_deg = (min_arcmin / 2.0 / 60.0) if min_arcmin else a_deg
+    obj_area_sq_deg = math.pi * a_deg * b_deg
     fill_ratio = obj_area_sq_deg / fov_area_sq_deg
 
     if fill_ratio >= 0.10:
@@ -381,6 +388,10 @@ def match_telescope_targets(
     moon_curve = []
     moon_always_down = True
     moon_always_up = True
+    _moon_rise_time = None
+    _moon_set_time = None
+    _prev_moon_alt = float(moon_alts_arr[0]) if len(moon_alts_arr) > 0 else 0.0
+
     for i, ct in enumerate(curve_times):
         moon_alt_t = float(moon_alts_arr[i])
         moon_curve.append(
@@ -393,6 +404,31 @@ def match_telescope_targets(
             moon_always_down = False
         if moon_alt_t <= 0:
             moon_always_up = False
+
+        # Detect horizon crossings (linear interpolation for sub-step precision)
+        if i > 0 and _prev_moon_alt <= 0 < moon_alt_t:
+            # Moon rises — interpolate crossing time
+            frac = (
+                (0 - _prev_moon_alt) / (moon_alt_t - _prev_moon_alt)
+                if moon_alt_t != _prev_moon_alt
+                else 0.5
+            )
+            prev_ct = curve_times[i - 1]
+            cross_t = prev_ct.utc.unix + frac * (ct.utc.unix - prev_ct.utc.unix)
+            if _moon_rise_time is None:
+                _moon_rise_time = round(cross_t, 0)
+        elif i > 0 and _prev_moon_alt > 0 >= moon_alt_t:
+            # Moon sets — interpolate crossing time
+            frac = (
+                (_prev_moon_alt - 0) / (_prev_moon_alt - moon_alt_t)
+                if moon_alt_t != _prev_moon_alt
+                else 0.5
+            )
+            prev_ct = curve_times[i - 1]
+            cross_t = prev_ct.utc.unix + frac * (ct.utc.unix - prev_ct.utc.unix)
+            _moon_set_time = round(cross_t, 0)  # keep last set (may be after midnight)
+
+        _prev_moon_alt = moon_alt_t
     # Fraction of observation window with moon below horizon
     moon_down_count = sum(1 for p in moon_curve if p['alt'] <= 0)
     moon_dark_fraction = round(moon_down_count / max(len(moon_curve), 1), 2)
@@ -460,7 +496,7 @@ def match_telescope_targets(
         obj_type = obj['type']
 
         # --- scores ---
-        fov_fit = _score_fov_fit(maj, fov_w or 0, fov_h or 0)
+        fov_fit = _score_fov_fit(maj, min_, fov_w or 0, fov_h or 0)
         sb = _calc_surface_brightness(mag, maj, min_)
         filter_score = _score_filter_match(obj_type, config.filter_type)
 
@@ -484,7 +520,20 @@ def match_telescope_targets(
         )
         total = max(total, 0.0)  # moon penalty can't push below zero
 
-        mosaic_recommended = maj is not None and fov_w is not None and (maj / 60.0) > fov_w * 1.0
+        # Mosaic recommended when the target's elliptical extent exceeds FOV
+        _maj_deg = (maj / 60.0) if maj else 0
+        _min_deg = (min_ / 60.0) if min_ else _maj_deg
+        _fits_in_fov = (
+            fov_w is not None
+            and fov_h is not None
+            and _maj_deg <= fov_w * 1.2
+            and _min_deg <= fov_h * 1.2
+        )
+        mosaic_recommended = bool(maj and fov_w and not _fits_in_fov)
+
+        # Optimal camera rotation: align sensor long side with target major axis
+        _pa = orig.get('angular_size_pa_deg')
+        _optimal_rot = round(((_pa or 0) + 90) % 360, 0) if _pa is not None else None
 
         results.append(
             {
@@ -497,11 +546,12 @@ def match_telescope_targets(
                 'angular_size_arcmin': maj,
                 'angular_size_min_arcmin': min_,
                 'angular_size_pa_deg': orig.get('angular_size_pa_deg'),
+                'optimal_rotation_deg': _optimal_rot,
                 'altitude': round(dusk_alt_val, 1),  # altitude at dusk
                 'azimuth': obj['azimuth'],  # azimuth at midnight
                 'dawn_altitude': round(dawn_alt_val, 1),  # altitude at dawn
                 'fov_fill_ratio': round(
-                    (math.pi * (maj / 2.0 / 60.0) ** 2) / (fov_w * fov_h),
+                    (math.pi * _maj_deg / 2.0 * _min_deg / 2.0) / (fov_w * fov_h),
                     4,
                 )
                 if (maj and fov_w and fov_h)
@@ -547,6 +597,42 @@ def match_telescope_targets(
                     }
                 )
 
+        # ── Detect rise / set / transit for each top-N target ─────────
+        for target in top_targets:
+            curve = target['altitude_curve']
+            _rise = None
+            _set = None
+            _peak = None
+            _peak_alt = -999.0
+            _prev_alt = curve[0]['alt'] if curve else 0.0
+
+            for j, pt in enumerate(curve):
+                alt_j = pt['alt']
+                t_j = pt['time']
+
+                # Track peak altitude (culmination / 中天)
+                if alt_j > _peak_alt:
+                    _peak_alt = alt_j
+                    _peak = t_j
+
+                # Detect horizon crossings
+                if j > 0:
+                    if _prev_alt <= 0 < alt_j:
+                        # Rise: crossing above horizon
+                        frac = (0 - _prev_alt) / (alt_j - _prev_alt) if alt_j != _prev_alt else 0.5
+                        _rise = round(curve[j - 1]['time'] + frac * (t_j - curve[j - 1]['time']), 0)
+                    elif _prev_alt > 0 >= alt_j:
+                        # Set: crossing below horizon
+                        frac = (_prev_alt - 0) / (_prev_alt - alt_j) if _prev_alt != alt_j else 0.5
+                        _set = round(curve[j - 1]['time'] + frac * (t_j - curve[j - 1]['time']), 0)
+
+                _prev_alt = alt_j
+
+            target['transit_time'] = _peak
+            target['transit_alt'] = round(_peak_alt, 1)
+            target['rise_time'] = _rise
+            target['set_time'] = _set
+
     return {
         'targets': top_targets,
         'moon': {
@@ -556,5 +642,7 @@ def match_telescope_targets(
             'always_down': moon_always_down,
             'always_up': moon_always_up,
             'dark_fraction': moon_dark_fraction,
+            'moonrise': _moon_rise_time,
+            'moonset': _moon_set_time,
         },
     }

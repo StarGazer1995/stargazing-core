@@ -44,6 +44,16 @@ class MoonInfo(BaseModel):
     azimuth: float | None = Field(
         default=None, description='Compass direction in degrees (requires lat/lon)'
     )
+    moonrise: float | None = Field(
+        default=None,
+        description='UTC unix timestamp when the moon rises above the horizon '
+        '(requires lat/lon; null if never rises during the observation window)',
+    )
+    moonset: float | None = Field(
+        default=None,
+        description='UTC unix timestamp when the moon sets below the horizon '
+        '(requires lat/lon; null if never sets during the observation window)',
+    )
 
 
 class VisiblePlanet(CelestialPosition):

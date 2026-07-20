@@ -62,6 +62,10 @@ _FALLBACK_SIZES: dict[str, tuple[float, float]] = {
     'Opt': (1.0, 1.0),
     # supernova remnants
     'SNR': (8.0, 8.0),
+    # Unknown / SIMBAD error — conservative generic fallback
+    'err': (2.0, 1.0),
+    '?': (2.0, 1.0),
+    '': (2.0, 1.0),
 }
 
 # thread-safe cache

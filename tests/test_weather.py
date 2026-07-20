@@ -180,38 +180,38 @@ class TestGetColormap:
 class TestNormaliseForColormap:
     def test_cloud_0_normalises_to_0(self):
         data = np.array([[0.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
         assert result[0, 0] == 0.0
 
     def test_cloud_100_normalises_to_1(self):
         data = np.array([[100.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
         assert result[0, 0] == 1.0
 
     def test_cloud_50_normalises_to_0_5(self):
         data = np.array([[50.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
         assert result[0, 0] == 0.5
 
     def test_nan_remains_0(self):
         data = np.array([[np.nan]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
+        result, valid = _normalise_for_colormap(data, WeatherVariable.CLOUD_COVER)
         assert result[0, 0] == 0.0
+        assert not valid[0, 0]  # NaN → invalid mask
 
     def test_precip_uses_log_scale(self):
         data = np.array([[50.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.PRECIPITATION)
-        # log(1+50)/log(1+50) = 1.0 → clipped to 1.0
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.PRECIPITATION)
         assert 0.0 < result[0, 0] <= 1.0
 
     def test_wind_linear(self):
         data = np.array([[75.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.WIND_SPEED_10M)
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.WIND_SPEED_10M)
         assert result[0, 0] == 0.5
 
     def test_temperature_maps_range(self):
         data = np.array([[0.0]], dtype=np.float32)
-        result = _normalise_for_colormap(data, WeatherVariable.TEMPERATURE_2M)
+        result, _valid = _normalise_for_colormap(data, WeatherVariable.TEMPERATURE_2M)
         assert result[0, 0] == 0.5
 
     def test_unregistered_normaliser_fallback(self):
@@ -221,7 +221,7 @@ class TestNormaliseForColormap:
         saved = _NORMALISERS.pop(WeatherVariable.CAPE, None)
         try:
             data = np.array([[500.0]], dtype=np.float32)
-            result = _normalise_for_colormap(data, WeatherVariable.CAPE)
+            result, _valid = _normalise_for_colormap(data, WeatherVariable.CAPE)
             # CAPE 500 J/kg → fallback treats as cloud % → 500/100 clipped to 1.0
             assert result[0, 0] == 1.0
         finally:
