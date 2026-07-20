@@ -143,30 +143,50 @@ def test_surface_brightness_none_when_no_size():
 
 def test_fov_fit_optimal():
     """30 arcmin object in 1°×0.7° FOV → ~14% fill → 1.0."""
-    score = _score_fov_fit(30, 1.0, 0.7)
+    score = _score_fov_fit(30, None, 1.0, 0.7)
     assert score == 1.0
 
 
 def test_fov_fit_too_small():
     """3 arcmin object in 1°×0.7° FOV → ~0.14% fill → near 0."""
-    score = _score_fov_fit(3, 1.0, 0.7)
+    score = _score_fov_fit(3, None, 1.0, 0.7)
     assert score < 0.5
 
 
 def test_fov_fit_large_mosaic():
     """120 arcmin (2°) object in 1°×0.7° FOV → >100% fill → still 1.0."""
-    score = _score_fov_fit(120, 1.0, 0.7)
+    score = _score_fov_fit(120, None, 1.0, 0.7)
     assert score == 1.0
 
 
 def test_fov_fit_no_size():
     """None angular size → 0."""
-    assert _score_fov_fit(None, 1.0, 0.7) == 0.0
+    assert _score_fov_fit(None, None, 1.0, 0.7) == 0.0
 
 
 def test_fov_fit_no_fov():
     """Zero FOV → 0."""
-    assert _score_fov_fit(30, 0, 0) == 0.0
+    assert _score_fov_fit(30, None, 0, 0) == 0.0
+
+
+def test_fov_fit_ellipse_lower_than_circular():
+    """Elongated object (30"×3") scores lower than circular (30"×30")."""
+    score_circular = _score_fov_fit(30, None, 0.5, 0.5)
+    score_ellipse = _score_fov_fit(30, 3, 0.5, 0.5)
+    # Ellipse area is 1/10 of circular → fill ratio drops → score drops
+    assert score_ellipse < score_circular
+
+
+def test_fov_fit_ellipse_with_min():
+    """Explicit min_arcmin gives correct ellipse-area score."""
+    score = _score_fov_fit(30, 20, 1.0, 0.7)
+    assert score == 1.0  # fill ≈ 0.375 → ≥10%
+
+
+def test_fov_fit_ellipse_round_object():
+    """When maj == min the ellipse score equals the circular score."""
+    score = _score_fov_fit(30, 30, 1.0, 0.7)
+    assert score == 1.0
 
 
 # ── Filter match score ──────────────────────────────────────────────────
@@ -217,6 +237,13 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     assert isinstance(moon['phase'], str)
     assert isinstance(moon['always_down'], bool)
     assert isinstance(moon['always_up'], bool)
+    # moonrise / moonset are explicit horizon crossing timestamps (or None)
+    assert 'moonrise' in moon
+    assert 'moonset' in moon
+    if moon['moonrise'] is not None:
+        assert isinstance(moon['moonrise'], (int, float))
+    if moon['moonset'] is not None:
+        assert isinstance(moon['moonset'], (int, float))
 
     # Verify structure of first result
     r = targets[0]
@@ -228,6 +255,27 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     assert 'suitability_score' in r
     assert 'fov_fit_score' in r
     assert 'mosaic_recommended' in r
+    assert 'optimal_rotation_deg' in r
+    # PA is not null for most objects → rotation should be numeric or None
+    assert r['optimal_rotation_deg'] is None or isinstance(r['optimal_rotation_deg'], (int, float))
+    # Rise/set/transit times extracted from altitude_curve
+    assert 'rise_time' in r
+    assert 'set_time' in r
+    assert 'transit_time' in r
+    assert 'transit_alt' in r
+    if r['rise_time'] is not None:
+        assert isinstance(r['rise_time'], (int, float))
+    if r['set_time'] is not None:
+        assert isinstance(r['set_time'], (int, float))
+    if r['transit_time'] is not None:
+        assert isinstance(r['transit_time'], (int, float))
+        assert isinstance(r['transit_alt'], (int, float))
+    # Verify altitude_curve was populated for top-N targets
+    assert len(r['altitude_curve']) >= 2
+    if r['rise_time'] is not None:
+        assert r['rise_time'] >= r['altitude_curve'][0]['time']
+    if r['set_time'] is not None:
+        assert r['set_time'] <= r['altitude_curve'][-1]['time']
     assert 0 <= r['suitability_score'] <= 100
     # Results sorted by suitability_score desc, then dawn_altitude asc
     scores = [x['suitability_score'] for x in targets]

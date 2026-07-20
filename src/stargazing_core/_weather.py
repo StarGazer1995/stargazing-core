@@ -194,55 +194,61 @@ def _register(*variables: WeatherVariable):
     WeatherVariable.CLOUD_COVER_MID,
     WeatherVariable.CLOUD_COVER_HIGH,
 )
-def _normalise_cloud(data: np.ndarray) -> np.ndarray:
+def _normalise_cloud(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     valid = ~np.isnan(data)
     result = np.where(valid, data, 0.0)
     np.multiply(result, 0.01, out=result)  # / 100 in-place
     np.clip(result, 0.0, 1.0, out=result)
-    return result
+    return result, valid
 
 
 @_register(WeatherVariable.PRECIPITATION)
-def _normalise_precip(data: np.ndarray) -> np.ndarray:
+def _normalise_precip(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     valid = ~np.isnan(data)
     result = np.where(valid, data, 0.0)
     np.log1p(result, out=result)
     np.multiply(result, 1.0 / np.log1p(50), out=result)
     np.clip(result, 0.0, 1.0, out=result)
-    return result
+    return result, valid
 
 
 @_register(WeatherVariable.WIND_SPEED_10M)
-def _normalise_wind(data: np.ndarray) -> np.ndarray:
+def _normalise_wind(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     valid = ~np.isnan(data)
     result = np.where(valid, data, 0.0)
     np.multiply(result, 1.0 / 150.0, out=result)
     np.clip(result, 0.0, 1.0, out=result)
-    return result
+    return result, valid
 
 
 @_register(WeatherVariable.TEMPERATURE_2M)
-def _normalise_temperature(data: np.ndarray) -> np.ndarray:
+def _normalise_temperature(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     valid = ~np.isnan(data)
     result = np.where(valid, data, 0.0)
     np.add(result, 40.0, out=result)
     np.multiply(result, 1.0 / 80.0, out=result)
     np.clip(result, 0.0, 1.0, out=result)
-    return result
+    return result, valid
 
 
 @_register(WeatherVariable.CAPE)
-def _normalise_cape(data: np.ndarray) -> np.ndarray:
+def _normalise_cape(data: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     valid = ~np.isnan(data)
     result = np.where(valid, data, 0.0)
     np.log1p(result, out=result)
     np.multiply(result, 1.0 / np.log1p(5000), out=result)
     np.clip(result, 0.0, 1.0, out=result)
-    return result
+    return result, valid
 
 
-def _normalise_for_colormap(data: np.ndarray, variable: WeatherVariable) -> np.ndarray:
-    """Dispatch to the registered per-variable normaliser."""
+def _normalise_for_colormap(
+    data: np.ndarray, variable: WeatherVariable
+) -> tuple[np.ndarray, np.ndarray]:
+    """Dispatch to the registered per-variable normaliser.
+
+    Returns (normalised_data, valid_mask) where valid_mask is True for
+    non-NaN input cells — the caller reuses it instead of recomputing.
+    """
     normaliser = _NORMALISERS.get(variable)
     if normaliser is None:
         # Fallback: treat like cloud (0–100 % linear)
@@ -297,9 +303,7 @@ def render_weather_tile(
     lut = get_colormap(variable)
 
     # ── single-pass: normalise → LUT index → RGBA ──
-    valid = ~np.isnan(data)
-    normalised = _normalise_for_colormap(data, variable)  # reuses valid internally (sigh)
-    # TODO: merge valid computation into normalisers to avoid double isnan
+    normalised, valid = _normalise_for_colormap(data, variable)
 
     idx = np.clip((normalised * 255.0).astype(np.uint8), 0, 255)
     rgba = lut[idx]  # view — no copy needed since we overwrite NaN pixels next

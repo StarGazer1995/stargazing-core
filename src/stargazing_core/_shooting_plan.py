@@ -95,15 +95,8 @@ def generate_shooting_schedule(
     warnings: list[str] = []
 
     if not moon.get('always_down') and moon.get('illumination', 0) > 0.3:
-        # Moon is up at dusk with significant illumination — find when it sets
-        moon_curve = moon.get('altitude_curve', [])
-        moon_set_time = None
-        for pt in moon_curve:
-            if pt['alt'] > 0:
-                continue
-            # Moon just went below horizon — find where it crosses
-            moon_set_time = pt['time']
-            break
+        # Moon is up at dusk with significant illumination — use explicit moonset
+        moon_set_time = moon.get('moonset')
 
         if moon_set_time is not None:
             moon_set_dt = datetime.fromtimestamp(moon_set_time, tz=timezone.utc)

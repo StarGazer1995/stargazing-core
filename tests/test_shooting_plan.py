@@ -212,6 +212,7 @@ def test_moon_delay_exceeds_dark_time():
         'always_down': False,
         'always_up': False,
         'altitude_curve': moon_curve,
+        'moonset': dusk_ts + 7 * 900,  # moon crosses below horizon at index 7
     }
     # Short night: 100 min → moon delay (~120 min + buffer) exceeds it
     plan = generate_shooting_schedule(
