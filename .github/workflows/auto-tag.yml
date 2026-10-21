@@ -3,11 +3,24 @@ name: Auto Tag on Main
 on:
   push:
     branches:
-      - master
+      - main
+
+permissions:
+  contents: read
 
 jobs:
+  dependency-chain:
+    uses: StarGazer1995/mcp-stargazing/.github/workflows/dependency-chain-reusable.yml@main
+    with:
+      changed_repository: ${{ github.repository }}
+      candidate_ref: ${{ github.sha }}
+      baseline_ref: ${{ github.event.before }}
+      refs_json: '{}'
+      allow_known_baseline: false
+
   tag-if-version-changed:
     name: Create tag when version bumps
+    needs: dependency-chain
     runs-on: ubuntu-latest
     if: github.event.commits[0].author.name != 'github-actions[bot]'
     steps:
