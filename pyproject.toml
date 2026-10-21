@@ -43,6 +43,11 @@ dev = [
     "ruff>=0.5",
 ]
 
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+default = true
+
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["stargazing_core*"]
