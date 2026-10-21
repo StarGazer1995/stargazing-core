@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,7 +15,7 @@ jobs:
     with:
       changed_repository: ${{ github.repository }}
       candidate_ref: ${{ github.sha }}
-      baseline_ref: ${{ github.event.before }}
+      baseline_ref: ${{ github.event.before || format('{0}^', github.sha) }}
       refs_json: '{}'
       allow_known_baseline: false
 
@@ -22,7 +23,7 @@ jobs:
     name: Create tag when version bumps
     needs: dependency-chain
     runs-on: ubuntu-latest
-    if: github.event.commits[0].author.name != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@v4
         with:
