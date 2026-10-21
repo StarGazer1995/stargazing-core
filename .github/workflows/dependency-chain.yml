@@ -1,0 +1,30 @@
+name: Dependency Chain
+
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      refs_json:
+        description: Coordinated refs, for example {"stargazing-place-finder":"refs/pull/42/head"}
+        required: false
+        default: '{}'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-chain-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-chain:
+    uses: StarGazer1995/mcp-stargazing/.github/workflows/dependency-chain-reusable.yml@main
+    with:
+      changed_repository: ${{ github.repository }}
+      candidate_ref: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha || github.sha }}
+      baseline_ref: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before || 'main' }}
+      refs_json: ${{ inputs.refs_json || '{}' }}
+      allow_known_baseline: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}

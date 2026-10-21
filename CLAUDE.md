@@ -66,7 +66,7 @@ stargazing_core/          ← installable package (flat namespace)
 ## Release Process
 
 1. Bump version in `pyproject.toml` AND `src/stargazing_core/__init__.py`
-2. PR → review → merge to `master`
+2. PR → review → merge to `main`
 3. Auto-tag workflow creates `vX.Y.Z` tag
 4. Tag push triggers `release-pypi.yml` → OIDC Trusted Publishing to PyPI
 5. GitHub Release auto-generated

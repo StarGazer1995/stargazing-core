@@ -91,13 +91,19 @@ from stargazing_core import (
 | [mcp-stargazing](https://github.com/StarGazer1995/mcp-stargazing) | `>=0.1.0` | ✅ Active |
 | [stargazing-place-finder](https://github.com/StarGazer1995/stargazing-place-finder) | `>=0.1.0` | ✅ Active |
 
+## Cross-repository CI
+
+Changes to core run both consumer suites against a locally built core wheel.
+The shared baseline/candidate policy is documented in
+[mcp-stargazing/docs/dependency-chain-ci.md](https://github.com/StarGazer1995/mcp-stargazing/blob/main/docs/dependency-chain-ci.md).
+
 ## Release
 
 Version: **0.1.0** ([PyPI](https://pypi.org/project/stargazing-core/))
 
 Release process:
 1. Bump version in `pyproject.toml`
-2. Merge to `master` → auto-tag workflow creates `vX.Y.Z` tag
+2. Merge to `main` → auto-tag workflow creates `vX.Y.Z` tag
 3. Tag push triggers `release-pypi.yml` → OIDC Trusted Publishing to PyPI
 4. GitHub Release auto-generated
 
