@@ -1,6 +1,10 @@
 """Tests for deep-sky filtering and scoring."""
 
+import json
+import math
+
 import astropy.units as u
+import pytest
 from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time
 
@@ -138,6 +142,26 @@ def test_surface_brightness_none_when_no_size():
     assert _calc_surface_brightness(5.0, None, None) is None
 
 
+@pytest.mark.parametrize(
+    'mag,major,minor',
+    [
+        (float('nan'), 480.0, 480.0),
+        (float('inf'), 480.0, 480.0),
+        (5.0, float('nan'), 10.0),
+        (5.0, 10.0, float('nan')),
+    ],
+)
+def test_missing_photometry_does_not_become_maximum_brightness(mag, major, minor):
+    assert _calc_surface_brightness(mag, major, minor) is None
+
+
+def test_simbad_types_use_the_same_filter_scores_as_english_types():
+    assert _score_filter_match('OpC', 'Hα') == 0.0
+    assert _score_filter_match('OpC', None) == 1.0
+    assert _score_filter_match('HII', 'Hα') == 1.0
+    assert _score_filter_match('G', 'Hα') == 0.1
+
+
 # ── FOV fit score ───────────────────────────────────────────────────────
 
 
@@ -223,6 +247,9 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     moon = result['moon']
     assert len(targets) > 0
     assert len(targets) <= 10
+    # Unknown catalog magnitudes are null; scores stay finite and JSON is strict.
+    json.dumps(targets, allow_nan=False)
+    assert all(math.isfinite(target['suitability_score']) for target in targets)
 
     # Verify moon fields
     assert 'illumination' in moon
