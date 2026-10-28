@@ -138,7 +138,8 @@ def score_deep_sky_objects(
     moon_altaz = moon_coord.transform_to(altaz_frame)
     moon_up = moon_illum > 0.1 and moon_altaz.alt.deg > 0
 
-    effective_mag = mag[valid].copy()
+    # Missing photometry must not poison sorting with NaN scores.
+    effective_mag = np.where(np.isfinite(mag[valid]), mag[valid], 99.9)
     moon_skip: np.ndarray = np.zeros(valid.sum(), dtype=bool)
 
     if moon_up:
@@ -199,7 +200,9 @@ def _calc_surface_brightness(
     approximation from maj_arcmin alone.  Returns None when no size data
     is available.
     """
-    if maj_arcmin is None:
+    if maj_arcmin is None or not math.isfinite(mag) or not math.isfinite(maj_arcmin):
+        return None
+    if min_arcmin is not None and not math.isfinite(min_arcmin):
         return None
     a = maj_arcmin / 2.0  # semi-major axis
     b = (min_arcmin / 2.0) if min_arcmin is not None else a  # semi-minor
@@ -246,7 +249,18 @@ def _score_fov_fit(
 def _score_filter_match(obj_type: str, filter_type: str | None) -> float:
     """Score how well a filter matches an object type (0.0–1.0)."""
     table = _FILTER_MATCH.get(filter_type, _FILTER_MATCH[None])
-    obj_lower = obj_type.lower()
+    # The packaged SIMBAD catalog uses codes rather than these English labels.
+    aliases = {
+        'OpC': 'open cluster',
+        'GlC': 'globular cluster',
+        'G': 'galaxy',
+        'Gx': 'galaxy',
+        'HII': 'emission nebula',
+        'RNe': 'reflection nebula',
+        'PN': 'planetary nebula',
+        'SNR': 'supernova remnant',
+    }
+    obj_lower = aliases.get(obj_type, obj_type).lower()
     for key, score in table.items():
         if key in obj_lower:
             return score
@@ -541,7 +555,7 @@ def match_telescope_targets(
                 'ra': orig.get('ra') if orig else None,
                 'dec': orig.get('dec') if orig else None,
                 'type': obj_type,
-                'magnitude': mag,
+                'magnitude': mag if math.isfinite(mag) else None,
                 'surface_brightness': round(sb, 2) if sb is not None else None,
                 'angular_size_arcmin': maj,
                 'angular_size_min_arcmin': min_,

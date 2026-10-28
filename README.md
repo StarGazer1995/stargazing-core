@@ -86,6 +86,12 @@ from stargazing_core import (
 
 ## Compatibility
 
+Target ranking computes positions for the requested observing night. Missing/non-finite
+photometry earns no surface-brightness bonus; telescope results represent unknown magnitudes
+as `null` and keep suitability scores finite. The filter matcher recognizes common SIMBAD
+type codes such as `OpC`, `HII`, `G`, and `PN` as well as English object types. These source
+corrections require a new core package release before installed consumers receive them.
+
 | Consumer | Min version | Status |
 |----------|-------------|--------|
 | [mcp-stargazing](https://github.com/StarGazer1995/mcp-stargazing) | `>=0.1.0` | ✅ Active |
