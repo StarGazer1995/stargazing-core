@@ -86,6 +86,13 @@ from stargazing_core import (
 
 ## Compatibility
 
+`generate_shooting_schedule` interprets historical naive dusk/dawn strings as UTC.
+An explicit ISO UTC offset preserves the instant and is converted to UTC for scheduling,
+including altitude-curve alignment and moonset delay. The original input strings remain
+echoed in `dusk`/`dawn`; slot timestamps are UTC. A nonpositive interval yields an empty
+plan with zero duration and a warning. These source fixes need a package release before
+installed consumers receive them; no version publication is included in this change.
+
 Target ranking computes positions for the requested observing night. Missing/non-finite
 photometry earns no surface-brightness bonus; telescope results represent unknown magnitudes
 as `null` and keep suitability scores finite. The filter matcher recognizes common SIMBAD
