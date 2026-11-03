@@ -48,6 +48,16 @@ class ShootingPlan(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+def _utc_datetime(value: str) -> datetime:
+    """Keep explicit offsets; historical naive astronomy timestamps denote UTC."""
+    parsed = datetime.fromisoformat(value)
+    return (
+        parsed.replace(tzinfo=timezone.utc)
+        if parsed.tzinfo is None
+        else parsed.astimezone(timezone.utc)
+    )
+
+
 def generate_shooting_schedule(
     targets: list[dict],
     moon: dict,
@@ -62,8 +72,8 @@ def generate_shooting_schedule(
     Args:
         targets: match_telescope_targets 'targets' list (sorted by dawn_altitude).
         moon: match_telescope_targets 'moon' dict.
-        dusk: Civil dusk ISO datetime string.
-        dawn: Civil dawn ISO datetime string.
+        dusk: Civil dusk ISO datetime string; naive values denote UTC.
+        dawn: Civil dawn ISO datetime string; explicit offsets preserve their instant.
         min_alt: Minimum acceptable altitude for imaging (degrees).
         min_duration_min: Minimum slot duration to include a target (minutes).
 
@@ -71,11 +81,11 @@ def generate_shooting_schedule(
         ShootingPlan with time-allocated slots.
     """
 
-    # ── Parse dusk/dawn (force UTC) ────────────────────────────────────
-    dusk_dt = datetime.fromisoformat(dusk).replace(tzinfo=timezone.utc)
-    dawn_dt = datetime.fromisoformat(dawn).replace(tzinfo=timezone.utc)
+    # ── Normalize to UTC without relabeling offset-aware wall times ─────
+    dusk_dt = _utc_datetime(dusk)
+    dawn_dt = _utc_datetime(dawn)
     total_dark_sec = (dawn_dt - dusk_dt).total_seconds()
-    total_dark_min = int(total_dark_sec / 60)
+    total_dark_min = max(0, int(total_dark_sec / 60))
     if total_dark_min <= 0:
         return ShootingPlan(
             date=dusk_dt.strftime('%Y-%m-%d'),

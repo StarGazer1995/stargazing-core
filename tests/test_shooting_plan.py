@@ -2,6 +2,8 @@
 
 from datetime import datetime, timezone
 
+import pytest
+
 from stargazing_core import ShootingPlan, generate_shooting_schedule
 
 DUSK = '2024-01-15T18:00:00'
@@ -71,6 +73,52 @@ def test_no_dark():
     plan = generate_shooting_schedule([], moon, '2024-06-21T12:00:00', '2024-06-21T12:00:00')
     assert len(plan.slots) == 0
     assert len(plan.warnings) >= 1
+
+
+@pytest.mark.parametrize(
+    'dusk,dawn',
+    [
+        ('2024-01-15T18:00:00Z', '2024-01-16T06:00:00Z'),
+        ('2024-01-16T02:00:00+08:00', '2024-01-16T14:00:00+08:00'),
+        ('2024-01-15T13:00:00-05:00', '2024-01-16T01:00:00-05:00'),
+        ('2024-01-16T02:00:00+08:00', '2024-01-16T15:00:00+09:00'),
+    ],
+)
+@pytest.mark.parametrize('moon_up', [False, True])
+def test_equivalent_instants_preserve_slots_and_moon_delay(dusk, dawn, moon_up):
+    target = _mk_target('Timing fixture', _mk_curve([60] * 49))
+    moon = dict(NEW_MOON)
+    if moon_up:
+        moon.update(
+            always_down=False,
+            illumination=0.9,
+            phase='Full Moon',
+            moonset=datetime(2024, 1, 15, 19, tzinfo=timezone.utc).timestamp(),
+        )
+    expected = generate_shooting_schedule([target], moon, DUSK, DAWN)
+    actual = generate_shooting_schedule([target], moon, dusk, dawn)
+    assert actual.model_dump(exclude={'dusk', 'dawn'}) == expected.model_dump(
+        exclude={'dusk', 'dawn'}
+    )
+    assert actual.dusk == dusk and actual.dawn == dawn  # Original bounds remain echoed.
+    assert actual.used_min > 0
+    assert actual.moon_delay_min == (70 if moon_up else 0)
+
+
+def test_mixed_offsets_determine_duration_by_instants_not_wall_clock():
+    plan = generate_shooting_schedule(
+        [], NEW_MOON, '2026-11-08T20:00:00+08:00', '2026-11-08T23:00:00+09:00'
+    )
+    assert plan.total_dark_min == 120
+
+
+def test_reversed_interval_returns_empty_plan_without_negative_counts():
+    plan = generate_shooting_schedule(
+        [], NEW_MOON, '2026-11-08T20:00:00+08:00', '2026-11-08T11:00:00Z'
+    )
+    assert plan.total_dark_min == 0
+    assert plan.used_min == 0 and plan.slots == []
+    assert 'No dark time' in plan.warnings[0]
 
 
 def test_no_targets(redcat51_japan_feb2024):
