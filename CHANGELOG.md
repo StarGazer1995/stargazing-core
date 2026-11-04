@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 (2026-11-04) — Shooting-window time consistency
+
+- Preserve UTC instants for offset-aware shooting bounds instead of replacing their timezone.
+- Return an empty, non-negative schedule for non-positive intervals; naive bounds retain UTC semantics.
+- Align the public `__version__` value with distribution metadata. No scheduler schema changes.
+- Validated in the NAS source candidate with equivalent naive/local-offset/UTC requests; this is
+  software validation, not a guarantee of weather, tracking, exposure success or observed accuracy.
+
 ## 0.2.0 (2026-07-20) — Surface brightness precision & rise/set semantics
 
 ### Added
