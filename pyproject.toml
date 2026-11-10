@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stargazing-core"
-version = "0.2.2"
+version = "0.2.3"
 description = "Shared astronomical computation for stargazing tools — telescope optics, deep-sky catalog, equipment presets"
 requires-python = ">=3.11"
 authors = [
@@ -53,7 +53,7 @@ where = ["src"]
 include = ["stargazing_core*"]
 
 [tool.setuptools.package-data]
-"stargazing_core" = ["data/*.json"]
+"stargazing_core" = ["data/*.json", "data/*.txt"]
 
 # ── Ruff ──────────────────────────────
 

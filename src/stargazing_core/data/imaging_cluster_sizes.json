@@ -1,0 +1,3249 @@
+{
+  "source": "https://github.com/mattiaverga/OpenNGC/blob/be3cd6c5498806a2fbb2f7e0452ef802dbb02be0/database_files/NGC.csv",
+  "sha256": "54abea0b57b0a103831bfc7a8e3a99a23acfbf4bb581fcf3d8af539cbb826c84",
+  "copyright": "Mattia Verga and OpenNGC contributors",
+  "license": "CC-BY-SA-4.0",
+  "scope": "OpenNGC OCl entries with a positive MajAx; aliases from M. Missing MinAx is null. No nebula, cluster+nebula or galaxy extents are replaced.",
+  "objects": {
+    "IC 166": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "IC0166"
+    },
+    "IC 361": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "IC0361"
+    },
+    "IC 1023": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "IC1023"
+    },
+    "IC 1299": {
+      "major_arcmin": 2.0,
+      "minor_arcmin": 1.0,
+      "source_id": "IC1299"
+    },
+    "IC 1311": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "IC1311"
+    },
+    "IC 1369": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "IC1369"
+    },
+    "IC 1434": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "IC1434"
+    },
+    "IC 1442": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "IC1442"
+    },
+    "IC 1611": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "IC1611"
+    },
+    "IC 1612": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 0.8,
+      "source_id": "IC1612"
+    },
+    "IC 1624": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.9,
+      "source_id": "IC1624"
+    },
+    "IC 1626": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 1.0,
+      "source_id": "IC1626"
+    },
+    "IC 1641": {
+      "major_arcmin": 0.75,
+      "minor_arcmin": 0.65,
+      "source_id": "IC1641"
+    },
+    "IC 1655": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.5,
+      "source_id": "IC1655"
+    },
+    "IC 1660": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "IC1660"
+    },
+    "IC 1662": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "IC1662"
+    },
+    "IC 1708": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "IC1708"
+    },
+    "IC 2157": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "IC2157"
+    },
+    "IC 2391": {
+      "major_arcmin": 29.1,
+      "minor_arcmin": null,
+      "source_id": "IC2391"
+    },
+    "IC 2395": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "IC2395"
+    },
+    "IC 2488": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "IC2488"
+    },
+    "IC 2581": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "IC2581"
+    },
+    "IC 2602": {
+      "major_arcmin": 48.0,
+      "minor_arcmin": null,
+      "source_id": "IC2602"
+    },
+    "IC 2714": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "IC2714"
+    },
+    "IC 4291": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "IC4291"
+    },
+    "IC 4651": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "IC4651"
+    },
+    "IC 4665": {
+      "major_arcmin": 24.6,
+      "minor_arcmin": null,
+      "source_id": "IC4665"
+    },
+    "IC 4725": {
+      "major_arcmin": 14.1,
+      "minor_arcmin": null,
+      "source_id": "IC4725"
+    },
+    "M 25": {
+      "major_arcmin": 14.1,
+      "minor_arcmin": null,
+      "source_id": "IC4725"
+    },
+    "IC 4756": {
+      "major_arcmin": 24.0,
+      "minor_arcmin": null,
+      "source_id": "IC4756"
+    },
+    "IC 4996": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "IC4996"
+    },
+    "NGC 103": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC0103"
+    },
+    "NGC 110": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC0110"
+    },
+    "NGC 129": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC0129"
+    },
+    "NGC 133": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": null,
+      "source_id": "NGC0133"
+    },
+    "NGC 136": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC0136"
+    },
+    "NGC 146": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC0146"
+    },
+    "NGC 152": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": 3.0,
+      "source_id": "NGC0152"
+    },
+    "NGC 176": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC0176"
+    },
+    "NGC 188": {
+      "major_arcmin": 17.7,
+      "minor_arcmin": null,
+      "source_id": "NGC0188"
+    },
+    "NGC 189": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC0189"
+    },
+    "NGC 220": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC0220"
+    },
+    "NGC 222": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC0222"
+    },
+    "NGC 225": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC0225"
+    },
+    "NGC 231": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC0231"
+    },
+    "NGC 241": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC0241"
+    },
+    "NGC 242": {
+      "major_arcmin": 0.75,
+      "minor_arcmin": 0.75,
+      "source_id": "NGC0242"
+    },
+    "NGC 256": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC0256"
+    },
+    "NGC 265": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC0265"
+    },
+    "NGC 267": {
+      "major_arcmin": 2.0,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC0267"
+    },
+    "NGC 269": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC0269"
+    },
+    "NGC 290": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC0290"
+    },
+    "NGC 294": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC0294"
+    },
+    "NGC 299": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC0299"
+    },
+    "NGC 306": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC0306"
+    },
+    "NGC 330": {
+      "major_arcmin": 2.8,
+      "minor_arcmin": 2.5,
+      "source_id": "NGC0330"
+    },
+    "NGC 346": {
+      "major_arcmin": 8.5,
+      "minor_arcmin": 8.5,
+      "source_id": "NGC0346"
+    },
+    "NGC 361": {
+      "major_arcmin": 2.6,
+      "minor_arcmin": 2.6,
+      "source_id": "NGC0361"
+    },
+    "NGC 366": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC0366"
+    },
+    "NGC 371": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": 3.8,
+      "source_id": "NGC0371"
+    },
+    "NGC 376": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC0376"
+    },
+    "NGC 381": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC0381"
+    },
+    "NGC 395": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC0395"
+    },
+    "NGC 411": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": 1.9,
+      "source_id": "NGC0411"
+    },
+    "NGC 422": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC0422"
+    },
+    "NGC 433": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC0433"
+    },
+    "NGC 436": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC0436"
+    },
+    "NGC 456": {
+      "major_arcmin": 3.8,
+      "minor_arcmin": 2.9,
+      "source_id": "NGC0456"
+    },
+    "NGC 457": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC0457"
+    },
+    "NGC 458": {
+      "major_arcmin": 2.6,
+      "minor_arcmin": 2.3,
+      "source_id": "NGC0458"
+    },
+    "NGC 465": {
+      "major_arcmin": 5.0,
+      "minor_arcmin": 4.0,
+      "source_id": "NGC0465"
+    },
+    "NGC 559": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC0559"
+    },
+    "NGC 581": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC0581"
+    },
+    "M 103": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC0581"
+    },
+    "NGC 602": {
+      "major_arcmin": 3.2,
+      "minor_arcmin": 2.9,
+      "source_id": "NGC0602"
+    },
+    "NGC 609": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC0609"
+    },
+    "NGC 637": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC0637"
+    },
+    "NGC 643": {
+      "major_arcmin": 2.2,
+      "minor_arcmin": 2.2,
+      "source_id": "NGC0643"
+    },
+    "NGC 654": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC0654"
+    },
+    "NGC 657": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC0657"
+    },
+    "NGC 659": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC0659"
+    },
+    "NGC 663": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC0663"
+    },
+    "NGC 743": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC0743"
+    },
+    "NGC 744": {
+      "major_arcmin": 11.7,
+      "minor_arcmin": null,
+      "source_id": "NGC0744"
+    },
+    "NGC 752": {
+      "major_arcmin": 39.0,
+      "minor_arcmin": null,
+      "source_id": "NGC0752"
+    },
+    "NGC 796": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC0796"
+    },
+    "NGC 869": {
+      "major_arcmin": 14.4,
+      "minor_arcmin": null,
+      "source_id": "NGC0869"
+    },
+    "NGC 884": {
+      "major_arcmin": 10.5,
+      "minor_arcmin": null,
+      "source_id": "NGC0884"
+    },
+    "NGC 886": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC0886"
+    },
+    "NGC 956": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC0956"
+    },
+    "NGC 957": {
+      "major_arcmin": 10.2,
+      "minor_arcmin": null,
+      "source_id": "NGC0957"
+    },
+    "NGC 1027": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC1027"
+    },
+    "NGC 1039": {
+      "major_arcmin": 22.5,
+      "minor_arcmin": null,
+      "source_id": "NGC1039"
+    },
+    "M 34": {
+      "major_arcmin": 22.5,
+      "minor_arcmin": null,
+      "source_id": "NGC1039"
+    },
+    "NGC 1193": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1193"
+    },
+    "NGC 1220": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1220"
+    },
+    "NGC 1245": {
+      "major_arcmin": 11.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1245"
+    },
+    "NGC 1252": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1252"
+    },
+    "NGC 1342": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC1342"
+    },
+    "NGC 1348": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1348"
+    },
+    "NGC 1444": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1444"
+    },
+    "NGC 1496": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": null,
+      "source_id": "NGC1496"
+    },
+    "NGC 1502": {
+      "major_arcmin": 10.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1502"
+    },
+    "NGC 1513": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC1513"
+    },
+    "NGC 1520": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1520"
+    },
+    "NGC 1528": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1528"
+    },
+    "NGC 1545": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1545"
+    },
+    "NGC 1548": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1548"
+    },
+    "NGC 1557": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1557"
+    },
+    "NGC 1582": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC1582"
+    },
+    "NGC 1605": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC1605"
+    },
+    "NGC 1641": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1641"
+    },
+    "NGC 1647": {
+      "major_arcmin": 27.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1647"
+    },
+    "NGC 1662": {
+      "major_arcmin": 13.8,
+      "minor_arcmin": null,
+      "source_id": "NGC1662"
+    },
+    "NGC 1663": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1663"
+    },
+    "NGC 1664": {
+      "major_arcmin": 11.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1664"
+    },
+    "NGC 1673": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC1673"
+    },
+    "NGC 1676": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1676"
+    },
+    "NGC 1696": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1696"
+    },
+    "NGC 1702": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1702"
+    },
+    "NGC 1704": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1704"
+    },
+    "NGC 1708": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1708"
+    },
+    "NGC 1718": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC1718"
+    },
+    "NGC 1724": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1724"
+    },
+    "NGC 1732": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1732"
+    },
+    "NGC 1733": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1733"
+    },
+    "NGC 1734": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1734"
+    },
+    "NGC 1735": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1735"
+    },
+    "NGC 1746": {
+      "major_arcmin": 18.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1746"
+    },
+    "NGC 1747": {
+      "major_arcmin": 4.4,
+      "minor_arcmin": 4.4,
+      "source_id": "NGC1747"
+    },
+    "NGC 1749": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC1749"
+    },
+    "NGC 1764": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1764"
+    },
+    "NGC 1766": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1766"
+    },
+    "NGC 1767": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1767"
+    },
+    "NGC 1768": {
+      "major_arcmin": 0.65,
+      "minor_arcmin": 0.55,
+      "source_id": "NGC1768"
+    },
+    "NGC 1772": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1772"
+    },
+    "NGC 1774": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1774"
+    },
+    "NGC 1775": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1775"
+    },
+    "NGC 1776": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1776"
+    },
+    "NGC 1778": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC1778"
+    },
+    "NGC 1782": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1782"
+    },
+    "NGC 1787": {
+      "major_arcmin": 24.0,
+      "minor_arcmin": 14.0,
+      "source_id": "NGC1787"
+    },
+    "NGC 1791": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1791"
+    },
+    "NGC 1793": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1793"
+    },
+    "NGC 1795": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC1795"
+    },
+    "NGC 1798": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1798"
+    },
+    "NGC 1802": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC1802"
+    },
+    "NGC 1804": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.85,
+      "source_id": "NGC1804"
+    },
+    "NGC 1807": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1807"
+    },
+    "NGC 1810": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1810"
+    },
+    "NGC 1813": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1813"
+    },
+    "NGC 1815": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1815"
+    },
+    "NGC 1816": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.75,
+      "source_id": "NGC1816"
+    },
+    "NGC 1817": {
+      "major_arcmin": 9.3,
+      "minor_arcmin": null,
+      "source_id": "NGC1817"
+    },
+    "NGC 1820": {
+      "major_arcmin": 7.0,
+      "minor_arcmin": 5.4,
+      "source_id": "NGC1820"
+    },
+    "NGC 1822": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1822"
+    },
+    "NGC 1823": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1823"
+    },
+    "NGC 1825": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1825"
+    },
+    "NGC 1826": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1826"
+    },
+    "NGC 1828": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1828"
+    },
+    "NGC 1830": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1830"
+    },
+    "NGC 1834": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.85,
+      "source_id": "NGC1834"
+    },
+    "NGC 1836": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1836"
+    },
+    "NGC 1837": {
+      "major_arcmin": 1.9,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1837"
+    },
+    "NGC 1838": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1838"
+    },
+    "NGC 1839": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1839"
+    },
+    "NGC 1840": {
+      "major_arcmin": 0.8,
+      "minor_arcmin": 0.7,
+      "source_id": "NGC1840"
+    },
+    "NGC 1842": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1842"
+    },
+    "NGC 1844": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1844"
+    },
+    "NGC 1847": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1847"
+    },
+    "NGC 1848": {
+      "major_arcmin": 2.2,
+      "minor_arcmin": 2.0,
+      "source_id": "NGC1848"
+    },
+    "NGC 1849": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1849"
+    },
+    "NGC 1857": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC1857"
+    },
+    "NGC 1859": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1859"
+    },
+    "NGC 1860": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1860"
+    },
+    "NGC 1861": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1861"
+    },
+    "NGC 1862": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.75,
+      "source_id": "NGC1862"
+    },
+    "NGC 1863": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1863"
+    },
+    "NGC 1864": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC1864"
+    },
+    "NGC 1865": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1865"
+    },
+    "NGC 1867": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1867"
+    },
+    "NGC 1878": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1878"
+    },
+    "NGC 1881": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 0.85,
+      "source_id": "NGC1881"
+    },
+    "NGC 1882": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1882"
+    },
+    "NGC 1883": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC1883"
+    },
+    "NGC 1885": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1885"
+    },
+    "NGC 1887": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1887"
+    },
+    "NGC 1890": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1890"
+    },
+    "NGC 1893": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1893"
+    },
+    "NGC 1894": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1894"
+    },
+    "NGC 1896": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC1896"
+    },
+    "NGC 1897": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1897"
+    },
+    "NGC 1898": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1898"
+    },
+    "NGC 1900": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1900"
+    },
+    "NGC 1901": {
+      "major_arcmin": 11.1,
+      "minor_arcmin": null,
+      "source_id": "NGC1901"
+    },
+    "NGC 1902": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC1902"
+    },
+    "NGC 1905": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC1905"
+    },
+    "NGC 1907": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC1907"
+    },
+    "NGC 1911": {
+      "major_arcmin": 0.6,
+      "minor_arcmin": 0.6,
+      "source_id": "NGC1911"
+    },
+    "NGC 1912": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1912"
+    },
+    "M 38": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC1912"
+    },
+    "NGC 1913": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1913"
+    },
+    "NGC 1921": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1921"
+    },
+    "NGC 1922": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1922"
+    },
+    "NGC 1928": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC1928"
+    },
+    "NGC 1929": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1929"
+    },
+    "NGC 1933": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC1933"
+    },
+    "NGC 1942": {
+      "major_arcmin": 1.9,
+      "minor_arcmin": 1.9,
+      "source_id": "NGC1942"
+    },
+    "NGC 1946": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1946"
+    },
+    "NGC 1950": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC1950"
+    },
+    "NGC 1951": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1951"
+    },
+    "NGC 1959": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1959"
+    },
+    "NGC 1960": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1960"
+    },
+    "M 36": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC1960"
+    },
+    "NGC 1962": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC1962"
+    },
+    "NGC 1963": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC1963"
+    },
+    "NGC 1965": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC1965"
+    },
+    "NGC 1966": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC1966"
+    },
+    "NGC 1967": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC1967"
+    },
+    "NGC 1969": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1969"
+    },
+    "NGC 1970": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1970"
+    },
+    "NGC 1971": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC1971"
+    },
+    "NGC 1972": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.8,
+      "source_id": "NGC1972"
+    },
+    "NGC 1974": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC1974"
+    },
+    "NGC 1983": {
+      "major_arcmin": 4.0,
+      "minor_arcmin": 3.0,
+      "source_id": "NGC1983"
+    },
+    "NGC 1984": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC1984"
+    },
+    "NGC 1994": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC1994"
+    },
+    "NGC 1996": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC1996"
+    },
+    "NGC 1997": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC1997"
+    },
+    "NGC 2000": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2000"
+    },
+    "NGC 2009": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC2009"
+    },
+    "NGC 2010": {
+      "major_arcmin": 1.9,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC2010"
+    },
+    "NGC 2011": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2011"
+    },
+    "NGC 2016": {
+      "major_arcmin": 1.8,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC2016"
+    },
+    "NGC 2017": {
+      "major_arcmin": 5.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2017"
+    },
+    "NGC 2021": {
+      "major_arcmin": 0.9,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2021"
+    },
+    "NGC 2025": {
+      "major_arcmin": 1.9,
+      "minor_arcmin": 1.9,
+      "source_id": "NGC2025"
+    },
+    "NGC 2026": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2026"
+    },
+    "NGC 2027": {
+      "major_arcmin": 4.6,
+      "minor_arcmin": 2.8,
+      "source_id": "NGC2027"
+    },
+    "NGC 2028": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2028"
+    },
+    "NGC 2029": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 0.85,
+      "source_id": "NGC2029"
+    },
+    "NGC 2036": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC2036"
+    },
+    "NGC 2037": {
+      "major_arcmin": 2.9,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC2037"
+    },
+    "NGC 2038": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2038"
+    },
+    "NGC 2042": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": 4.5,
+      "source_id": "NGC2042"
+    },
+    "NGC 2043": {
+      "major_arcmin": 0.65,
+      "minor_arcmin": 0.55,
+      "source_id": "NGC2043"
+    },
+    "NGC 2046": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2046"
+    },
+    "NGC 2047": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2047"
+    },
+    "NGC 2051": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2051"
+    },
+    "NGC 2053": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC2053"
+    },
+    "NGC 2056": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2056"
+    },
+    "NGC 2057": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC2057"
+    },
+    "NGC 2058": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": 2.1,
+      "source_id": "NGC2058"
+    },
+    "NGC 2059": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2059"
+    },
+    "NGC 2062": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC2062"
+    },
+    "NGC 2065": {
+      "major_arcmin": 2.3,
+      "minor_arcmin": 2.3,
+      "source_id": "NGC2065"
+    },
+    "NGC 2066": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2066"
+    },
+    "NGC 2072": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2072"
+    },
+    "NGC 2088": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2088"
+    },
+    "NGC 2091": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC2091"
+    },
+    "NGC 2092": {
+      "major_arcmin": 1.0,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2092"
+    },
+    "NGC 2094": {
+      "major_arcmin": 0.85,
+      "minor_arcmin": 0.75,
+      "source_id": "NGC2094"
+    },
+    "NGC 2095": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2095"
+    },
+    "NGC 2096": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 0.9,
+      "source_id": "NGC2096"
+    },
+    "NGC 2098": {
+      "major_arcmin": 2.2,
+      "minor_arcmin": 2.0,
+      "source_id": "NGC2098"
+    },
+    "NGC 2099": {
+      "major_arcmin": 11.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2099"
+    },
+    "M 37": {
+      "major_arcmin": 11.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2099"
+    },
+    "NGC 2102": {
+      "major_arcmin": 0.85,
+      "minor_arcmin": 0.85,
+      "source_id": "NGC2102"
+    },
+    "NGC 2107": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC2107"
+    },
+    "NGC 2109": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC2109"
+    },
+    "NGC 2111": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2111"
+    },
+    "NGC 2112": {
+      "major_arcmin": 21.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2112"
+    },
+    "NGC 2114": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.2,
+      "source_id": "NGC2114"
+    },
+    "NGC 2116": {
+      "major_arcmin": 1.2,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC2116"
+    },
+    "NGC 2117": {
+      "major_arcmin": 2.0,
+      "minor_arcmin": 1.8,
+      "source_id": "NGC2117"
+    },
+    "NGC 2118": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC2118"
+    },
+    "NGC 2125": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.1,
+      "source_id": "NGC2125"
+    },
+    "NGC 2126": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2126"
+    },
+    "NGC 2127": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2127"
+    },
+    "NGC 2129": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2129"
+    },
+    "NGC 2132": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2132"
+    },
+    "NGC 2133": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC2133"
+    },
+    "NGC 2137": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2137"
+    },
+    "NGC 2140": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2140"
+    },
+    "NGC 2141": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2141"
+    },
+    "NGC 2143": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2143"
+    },
+    "NGC 2145": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.5,
+      "source_id": "NGC2145"
+    },
+    "NGC 2147": {
+      "major_arcmin": 0.95,
+      "minor_arcmin": 0.95,
+      "source_id": "NGC2147"
+    },
+    "NGC 2151": {
+      "major_arcmin": 1.3,
+      "minor_arcmin": 1.3,
+      "source_id": "NGC2151"
+    },
+    "NGC 2158": {
+      "major_arcmin": 8.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2158"
+    },
+    "NGC 2160": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2160"
+    },
+    "NGC 2166": {
+      "major_arcmin": 1.4,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2166"
+    },
+    "NGC 2168": {
+      "major_arcmin": 24.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2168"
+    },
+    "M 35": {
+      "major_arcmin": 24.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2168"
+    },
+    "NGC 2169": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2169"
+    },
+    "NGC 2172": {
+      "major_arcmin": 1.7,
+      "minor_arcmin": 1.7,
+      "source_id": "NGC2172"
+    },
+    "NGC 2176": {
+      "major_arcmin": 1.1,
+      "minor_arcmin": 1.0,
+      "source_id": "NGC2176"
+    },
+    "NGC 2177": {
+      "major_arcmin": 1.5,
+      "minor_arcmin": 1.4,
+      "source_id": "NGC2177"
+    },
+    "NGC 2180": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2180"
+    },
+    "NGC 2184": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2184"
+    },
+    "NGC 2186": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2186"
+    },
+    "NGC 2192": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2192"
+    },
+    "NGC 2194": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2194"
+    },
+    "NGC 2202": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2202"
+    },
+    "NGC 2204": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2204"
+    },
+    "NGC 2213": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": 2.1,
+      "source_id": "NGC2213"
+    },
+    "NGC 2214": {
+      "major_arcmin": 3.1,
+      "minor_arcmin": 3.1,
+      "source_id": "NGC2214"
+    },
+    "NGC 2215": {
+      "major_arcmin": 8.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2215"
+    },
+    "NGC 2219": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2219"
+    },
+    "NGC 2225": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2225"
+    },
+    "NGC 2232": {
+      "major_arcmin": 9.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2232"
+    },
+    "NGC 2234": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2234"
+    },
+    "NGC 2236": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2236"
+    },
+    "NGC 2240": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2240"
+    },
+    "NGC 2241": {
+      "major_arcmin": 1.6,
+      "minor_arcmin": 1.6,
+      "source_id": "NGC2241"
+    },
+    "NGC 2243": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2243"
+    },
+    "NGC 2250": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2250"
+    },
+    "NGC 2251": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2251"
+    },
+    "NGC 2252": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2252"
+    },
+    "NGC 2254": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2254"
+    },
+    "NGC 2259": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2259"
+    },
+    "NGC 2262": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2262"
+    },
+    "NGC 2265": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2265"
+    },
+    "NGC 2266": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2266"
+    },
+    "NGC 2269": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2269"
+    },
+    "NGC 2270": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2270"
+    },
+    "NGC 2281": {
+      "major_arcmin": 10.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2281"
+    },
+    "NGC 2286": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2286"
+    },
+    "NGC 2287": {
+      "major_arcmin": 12.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2287"
+    },
+    "M 41": {
+      "major_arcmin": 12.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2287"
+    },
+    "NGC 2299": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2299"
+    },
+    "NGC 2301": {
+      "major_arcmin": 10.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2301"
+    },
+    "NGC 2304": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2304"
+    },
+    "NGC 2306": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2306"
+    },
+    "NGC 2309": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2309"
+    },
+    "NGC 2311": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2311"
+    },
+    "NGC 2312": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2312"
+    },
+    "NGC 2318": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2318"
+    },
+    "NGC 2319": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2319"
+    },
+    "NGC 2323": {
+      "major_arcmin": 14.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2323"
+    },
+    "M 50": {
+      "major_arcmin": 14.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2323"
+    },
+    "NGC 2324": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2324"
+    },
+    "NGC 2331": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2331"
+    },
+    "NGC 2335": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2335"
+    },
+    "NGC 2338": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2338"
+    },
+    "NGC 2343": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2343"
+    },
+    "NGC 2345": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2345"
+    },
+    "NGC 2348": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2348"
+    },
+    "NGC 2349": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2349"
+    },
+    "NGC 2351": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2351"
+    },
+    "NGC 2352": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2352"
+    },
+    "NGC 2353": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2353"
+    },
+    "NGC 2354": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2354"
+    },
+    "NGC 2355": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2355"
+    },
+    "NGC 2358": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2358"
+    },
+    "NGC 2360": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2360"
+    },
+    "NGC 2362": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2362"
+    },
+    "NGC 2367": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2367"
+    },
+    "NGC 2368": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2368"
+    },
+    "NGC 2374": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2374"
+    },
+    "NGC 2383": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2383"
+    },
+    "NGC 2384": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2384"
+    },
+    "NGC 2395": {
+      "major_arcmin": 4.62,
+      "minor_arcmin": null,
+      "source_id": "NGC2395"
+    },
+    "NGC 2396": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2396"
+    },
+    "NGC 2401": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2401"
+    },
+    "NGC 2409": {
+      "major_arcmin": 0.11,
+      "minor_arcmin": null,
+      "source_id": "NGC2409"
+    },
+    "NGC 2413": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2413"
+    },
+    "NGC 2414": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2414"
+    },
+    "NGC 2420": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2420"
+    },
+    "NGC 2421": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2421"
+    },
+    "NGC 2422": {
+      "major_arcmin": 19.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2422"
+    },
+    "M 47": {
+      "major_arcmin": 19.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2422"
+    },
+    "NGC 2423": {
+      "major_arcmin": 11.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2423"
+    },
+    "NGC 2425": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2425"
+    },
+    "NGC 2428": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2428"
+    },
+    "NGC 2430": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2430"
+    },
+    "NGC 2432": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2432"
+    },
+    "NGC 2437": {
+      "major_arcmin": 21.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2437"
+    },
+    "M 46": {
+      "major_arcmin": 21.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2437"
+    },
+    "NGC 2439": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2439"
+    },
+    "NGC 2447": {
+      "major_arcmin": 15.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2447"
+    },
+    "M 93": {
+      "major_arcmin": 15.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2447"
+    },
+    "NGC 2448": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2448"
+    },
+    "NGC 2451": {
+      "major_arcmin": 37.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2451"
+    },
+    "NGC 2453": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2453"
+    },
+    "NGC 2455": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2455"
+    },
+    "NGC 2459": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2459"
+    },
+    "NGC 2477": {
+      "major_arcmin": 18.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2477"
+    },
+    "NGC 2479": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2479"
+    },
+    "NGC 2482": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2482"
+    },
+    "NGC 2483": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2483"
+    },
+    "NGC 2489": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2489"
+    },
+    "NGC 2506": {
+      "major_arcmin": 10.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2506"
+    },
+    "NGC 2509": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2509"
+    },
+    "NGC 2516": {
+      "major_arcmin": 24.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2516"
+    },
+    "NGC 2520": {
+      "major_arcmin": 9.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2520"
+    },
+    "NGC 2533": {
+      "major_arcmin": 4.98,
+      "minor_arcmin": null,
+      "source_id": "NGC2533"
+    },
+    "NGC 2539": {
+      "major_arcmin": 12.3,
+      "minor_arcmin": null,
+      "source_id": "NGC2539"
+    },
+    "NGC 2546": {
+      "major_arcmin": 16.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2546"
+    },
+    "NGC 2547": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2547"
+    },
+    "NGC 2548": {
+      "major_arcmin": 28.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2548"
+    },
+    "M 48": {
+      "major_arcmin": 28.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2548"
+    },
+    "NGC 2567": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2567"
+    },
+    "NGC 2571": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2571"
+    },
+    "NGC 2580": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2580"
+    },
+    "NGC 2587": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2587"
+    },
+    "NGC 2588": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC2588"
+    },
+    "NGC 2609": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2609"
+    },
+    "NGC 2627": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2627"
+    },
+    "NGC 2632": {
+      "major_arcmin": 108.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2632"
+    },
+    "M 44": {
+      "major_arcmin": 108.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2632"
+    },
+    "NGC 2635": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2635"
+    },
+    "NGC 2645": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2645"
+    },
+    "NGC 2658": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2658"
+    },
+    "NGC 2659": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2659"
+    },
+    "NGC 2660": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2660"
+    },
+    "NGC 2664": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2664"
+    },
+    "NGC 2669": {
+      "major_arcmin": 8.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2669"
+    },
+    "NGC 2670": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2670"
+    },
+    "NGC 2671": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC2671"
+    },
+    "NGC 2678": {
+      "major_arcmin": 10.0,
+      "minor_arcmin": 10.0,
+      "source_id": "NGC2678"
+    },
+    "NGC 2682": {
+      "major_arcmin": 33.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2682"
+    },
+    "M 67": {
+      "major_arcmin": 33.0,
+      "minor_arcmin": null,
+      "source_id": "NGC2682"
+    },
+    "NGC 2849": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC2849"
+    },
+    "NGC 2866": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC2866"
+    },
+    "NGC 2910": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC2910"
+    },
+    "NGC 2925": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC2925"
+    },
+    "NGC 2972": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC2972"
+    },
+    "NGC 2982": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC2982"
+    },
+    "NGC 3033": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC3033"
+    },
+    "NGC 3036": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC3036"
+    },
+    "NGC 3105": {
+      "major_arcmin": 4.08,
+      "minor_arcmin": null,
+      "source_id": "NGC3105"
+    },
+    "NGC 3114": {
+      "major_arcmin": 12.3,
+      "minor_arcmin": null,
+      "source_id": "NGC3114"
+    },
+    "NGC 3228": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC3228"
+    },
+    "NGC 3255": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC3255"
+    },
+    "NGC 3293": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC3293"
+    },
+    "NGC 3330": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC3330"
+    },
+    "NGC 3446": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC3446"
+    },
+    "NGC 3496": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC3496"
+    },
+    "NGC 3519": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC3519"
+    },
+    "NGC 3532": {
+      "major_arcmin": 12.0,
+      "minor_arcmin": null,
+      "source_id": "NGC3532"
+    },
+    "NGC 3572": {
+      "major_arcmin": 4.08,
+      "minor_arcmin": null,
+      "source_id": "NGC3572"
+    },
+    "NGC 3590": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC3590"
+    },
+    "NGC 3680": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC3680"
+    },
+    "NGC 3766": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC3766"
+    },
+    "NGC 3909": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC3909"
+    },
+    "NGC 3960": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC3960"
+    },
+    "NGC 4052": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC4052"
+    },
+    "NGC 4103": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC4103"
+    },
+    "NGC 4184": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC4184"
+    },
+    "NGC 4230": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC4230"
+    },
+    "NGC 4337": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC4337"
+    },
+    "NGC 4349": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC4349"
+    },
+    "NGC 4439": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC4439"
+    },
+    "NGC 4463": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC4463"
+    },
+    "NGC 4609": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC4609"
+    },
+    "NGC 4755": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC4755"
+    },
+    "NGC 4815": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC4815"
+    },
+    "NGC 4852": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC4852"
+    },
+    "NGC 5043": {
+      "major_arcmin": 5.52,
+      "minor_arcmin": null,
+      "source_id": "NGC5043"
+    },
+    "NGC 5138": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5138"
+    },
+    "NGC 5168": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5168"
+    },
+    "NGC 5269": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC5269"
+    },
+    "NGC 5281": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC5281"
+    },
+    "NGC 5288": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC5288"
+    },
+    "NGC 5299": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5299"
+    },
+    "NGC 5316": {
+      "major_arcmin": 9.9,
+      "minor_arcmin": null,
+      "source_id": "NGC5316"
+    },
+    "NGC 5359": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC5359"
+    },
+    "NGC 5381": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC5381"
+    },
+    "NGC 5460": {
+      "major_arcmin": 13.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5460"
+    },
+    "NGC 5593": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC5593"
+    },
+    "NGC 5606": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC5606"
+    },
+    "NGC 5617": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC5617"
+    },
+    "NGC 5662": {
+      "major_arcmin": 8.1,
+      "minor_arcmin": null,
+      "source_id": "NGC5662"
+    },
+    "NGC 5715": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC5715"
+    },
+    "NGC 5749": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5749"
+    },
+    "NGC 5764": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC5764"
+    },
+    "NGC 5800": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC5800"
+    },
+    "NGC 5822": {
+      "major_arcmin": 18.0,
+      "minor_arcmin": null,
+      "source_id": "NGC5822"
+    },
+    "NGC 5823": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC5823"
+    },
+    "NGC 5925": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC5925"
+    },
+    "NGC 5998": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC5998"
+    },
+    "NGC 5999": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC5999"
+    },
+    "NGC 6005": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6005"
+    },
+    "NGC 6025": {
+      "major_arcmin": 11.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6025"
+    },
+    "NGC 6031": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6031"
+    },
+    "NGC 6067": {
+      "major_arcmin": 8.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6067"
+    },
+    "NGC 6087": {
+      "major_arcmin": 10.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6087"
+    },
+    "NGC 6115": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6115"
+    },
+    "NGC 6124": {
+      "major_arcmin": 13.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6124"
+    },
+    "NGC 6134": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6134"
+    },
+    "NGC 6152": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6152"
+    },
+    "NGC 6167": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6167"
+    },
+    "NGC 6169": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6169"
+    },
+    "NGC 6178": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6178"
+    },
+    "NGC 6192": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6192"
+    },
+    "NGC 6193": {
+      "major_arcmin": 8.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6193"
+    },
+    "NGC 6200": {
+      "major_arcmin": 8.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6200"
+    },
+    "NGC 6204": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6204"
+    },
+    "NGC 6208": {
+      "major_arcmin": 8.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6208"
+    },
+    "NGC 6216": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6216"
+    },
+    "NGC 6231": {
+      "major_arcmin": 13.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6231"
+    },
+    "NGC 6242": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6242"
+    },
+    "NGC 6249": {
+      "major_arcmin": 7.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6249"
+    },
+    "NGC 6253": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6253"
+    },
+    "NGC 6259": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6259"
+    },
+    "NGC 6268": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6268"
+    },
+    "NGC 6281": {
+      "major_arcmin": 10.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6281"
+    },
+    "NGC 6318": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6318"
+    },
+    "NGC 6322": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6322"
+    },
+    "NGC 6374": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6374"
+    },
+    "NGC 6396": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6396"
+    },
+    "NGC 6400": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6400"
+    },
+    "NGC 6404": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6404"
+    },
+    "NGC 6405": {
+      "major_arcmin": 15.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6405"
+    },
+    "M 6": {
+      "major_arcmin": 15.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6405"
+    },
+    "NGC 6416": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6416"
+    },
+    "NGC 6425": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6425"
+    },
+    "NGC 6444": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6444"
+    },
+    "NGC 6451": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6451"
+    },
+    "NGC 6469": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6469"
+    },
+    "NGC 6475": {
+      "major_arcmin": 22.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6475"
+    },
+    "M 7": {
+      "major_arcmin": 22.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6475"
+    },
+    "NGC 6494": {
+      "major_arcmin": 16.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6494"
+    },
+    "M 23": {
+      "major_arcmin": 16.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6494"
+    },
+    "NGC 6507": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6507"
+    },
+    "NGC 6520": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6520"
+    },
+    "NGC 6525": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6525"
+    },
+    "NGC 6531": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6531"
+    },
+    "M 21": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6531"
+    },
+    "NGC 6546": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6546"
+    },
+    "NGC 6554": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC6554"
+    },
+    "NGC 6561": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6561"
+    },
+    "NGC 6568": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6568"
+    },
+    "NGC 6583": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6583"
+    },
+    "NGC 6596": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6596"
+    },
+    "NGC 6603": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6603"
+    },
+    "NGC 6604": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6604"
+    },
+    "NGC 6605": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6605"
+    },
+    "NGC 6613": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6613"
+    },
+    "M 18": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6613"
+    },
+    "NGC 6625": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6625"
+    },
+    "NGC 6631": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC6631"
+    },
+    "NGC 6633": {
+      "major_arcmin": 12.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6633"
+    },
+    "NGC 6639": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6639"
+    },
+    "NGC 6645": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6645"
+    },
+    "NGC 6647": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6647"
+    },
+    "NGC 6649": {
+      "major_arcmin": 5.58,
+      "minor_arcmin": null,
+      "source_id": "NGC6649"
+    },
+    "NGC 6659": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6659"
+    },
+    "NGC 6664": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6664"
+    },
+    "NGC 6682": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6682"
+    },
+    "NGC 6683": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6683"
+    },
+    "NGC 6694": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6694"
+    },
+    "M 26": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6694"
+    },
+    "NGC 6698": {
+      "major_arcmin": 4.98,
+      "minor_arcmin": null,
+      "source_id": "NGC6698"
+    },
+    "NGC 6704": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6704"
+    },
+    "NGC 6705": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6705"
+    },
+    "M 11": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6705"
+    },
+    "NGC 6709": {
+      "major_arcmin": 8.7,
+      "minor_arcmin": null,
+      "source_id": "NGC6709"
+    },
+    "NGC 6716": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6716"
+    },
+    "NGC 6724": {
+      "major_arcmin": 3.18,
+      "minor_arcmin": null,
+      "source_id": "NGC6724"
+    },
+    "NGC 6728": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6728"
+    },
+    "NGC 6735": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6735"
+    },
+    "NGC 6737": {
+      "major_arcmin": 6.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6737"
+    },
+    "NGC 6743": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6743"
+    },
+    "NGC 6755": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6755"
+    },
+    "NGC 6756": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6756"
+    },
+    "NGC 6774": {
+      "major_arcmin": 30.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6774"
+    },
+    "NGC 6775": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6775"
+    },
+    "NGC 6791": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6791"
+    },
+    "NGC 6793": {
+      "major_arcmin": 8.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6793"
+    },
+    "NGC 6800": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6800"
+    },
+    "NGC 6802": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6802"
+    },
+    "NGC 6811": {
+      "major_arcmin": 7.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6811"
+    },
+    "NGC 6819": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC6819"
+    },
+    "NGC 6827": {
+      "major_arcmin": 2.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6827"
+    },
+    "NGC 6828": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6828"
+    },
+    "NGC 6830": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6830"
+    },
+    "NGC 6832": {
+      "major_arcmin": 3.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6832"
+    },
+    "NGC 6834": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6834"
+    },
+    "NGC 6837": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6837"
+    },
+    "NGC 6840": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6840"
+    },
+    "NGC 6843": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6843"
+    },
+    "NGC 6846": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6846"
+    },
+    "NGC 6856": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6856"
+    },
+    "NGC 6858": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6858"
+    },
+    "NGC 6866": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6866"
+    },
+    "NGC 6871": {
+      "major_arcmin": 9.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6871"
+    },
+    "NGC 6873": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6873"
+    },
+    "NGC 6882": {
+      "major_arcmin": 7.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6882"
+    },
+    "NGC 6883": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6883"
+    },
+    "NGC 6895": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC6895"
+    },
+    "NGC 6904": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC6904"
+    },
+    "NGC 6910": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC6910"
+    },
+    "NGC 6913": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6913"
+    },
+    "M 29": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC6913"
+    },
+    "NGC 6938": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6938"
+    },
+    "NGC 6939": {
+      "major_arcmin": 12.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6939"
+    },
+    "NGC 6940": {
+      "major_arcmin": 10.8,
+      "minor_arcmin": null,
+      "source_id": "NGC6940"
+    },
+    "NGC 6950": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC6950"
+    },
+    "NGC 6989": {
+      "major_arcmin": 5.4,
+      "minor_arcmin": null,
+      "source_id": "NGC6989"
+    },
+    "NGC 6991": {
+      "major_arcmin": 23.0,
+      "minor_arcmin": null,
+      "source_id": "NGC6991"
+    },
+    "NGC 7024": {
+      "major_arcmin": 4.92,
+      "minor_arcmin": null,
+      "source_id": "NGC7024"
+    },
+    "NGC 7031": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7031"
+    },
+    "NGC 7036": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7036"
+    },
+    "NGC 7037": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7037"
+    },
+    "NGC 7039": {
+      "major_arcmin": 7.8,
+      "minor_arcmin": null,
+      "source_id": "NGC7039"
+    },
+    "NGC 7044": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7044"
+    },
+    "NGC 7050": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7050"
+    },
+    "NGC 7055": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7055"
+    },
+    "NGC 7058": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC7058"
+    },
+    "NGC 7062": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7062"
+    },
+    "NGC 7063": {
+      "major_arcmin": 6.3,
+      "minor_arcmin": null,
+      "source_id": "NGC7063"
+    },
+    "NGC 7067": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC7067"
+    },
+    "NGC 7082": {
+      "major_arcmin": 9.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7082"
+    },
+    "NGC 7084": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7084"
+    },
+    "NGC 7086": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC7086"
+    },
+    "NGC 7092": {
+      "major_arcmin": 19.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7092"
+    },
+    "M 39": {
+      "major_arcmin": 19.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7092"
+    },
+    "NGC 7093": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7093"
+    },
+    "NGC 7127": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC7127"
+    },
+    "NGC 7128": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7128"
+    },
+    "NGC 7142": {
+      "major_arcmin": 9.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7142"
+    },
+    "NGC 7160": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC7160"
+    },
+    "NGC 7175": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7175"
+    },
+    "NGC 7209": {
+      "major_arcmin": 6.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7209"
+    },
+    "NGC 7226": {
+      "major_arcmin": 3.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7226"
+    },
+    "NGC 7234": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC7234"
+    },
+    "NGC 7243": {
+      "major_arcmin": 15.0,
+      "minor_arcmin": null,
+      "source_id": "NGC7243"
+    },
+    "NGC 7245": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7245"
+    },
+    "NGC 7261": {
+      "major_arcmin": 6.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7261"
+    },
+    "NGC 7281": {
+      "major_arcmin": 4.8,
+      "minor_arcmin": null,
+      "source_id": "NGC7281"
+    },
+    "NGC 7295": {
+      "major_arcmin": 2.7,
+      "minor_arcmin": null,
+      "source_id": "NGC7295"
+    },
+    "NGC 7419": {
+      "major_arcmin": 4.08,
+      "minor_arcmin": null,
+      "source_id": "NGC7419"
+    },
+    "NGC 7423": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7423"
+    },
+    "NGC 7429": {
+      "major_arcmin": 4.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7429"
+    },
+    "NGC 7438": {
+      "major_arcmin": 5.7,
+      "minor_arcmin": null,
+      "source_id": "NGC7438"
+    },
+    "NGC 7510": {
+      "major_arcmin": 3.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7510"
+    },
+    "NGC 7654": {
+      "major_arcmin": 9.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7654"
+    },
+    "M 52": {
+      "major_arcmin": 9.9,
+      "minor_arcmin": null,
+      "source_id": "NGC7654"
+    },
+    "NGC 7686": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7686"
+    },
+    "NGC 7708": {
+      "major_arcmin": 5.1,
+      "minor_arcmin": null,
+      "source_id": "NGC7708"
+    },
+    "NGC 7762": {
+      "major_arcmin": 6.5,
+      "minor_arcmin": null,
+      "source_id": "NGC7762"
+    },
+    "NGC 7788": {
+      "major_arcmin": 2.4,
+      "minor_arcmin": null,
+      "source_id": "NGC7788"
+    },
+    "NGC 7789": {
+      "major_arcmin": 14.4,
+      "minor_arcmin": null,
+      "source_id": "NGC7789"
+    },
+    "NGC 7790": {
+      "major_arcmin": 3.6,
+      "minor_arcmin": null,
+      "source_id": "NGC7790"
+    },
+    "NGC 7795": {
+      "major_arcmin": 2.22,
+      "minor_arcmin": null,
+      "source_id": "NGC7795"
+    },
+    "NGC 7801": {
+      "major_arcmin": 4.2,
+      "minor_arcmin": null,
+      "source_id": "NGC7801"
+    }
+  }
+}

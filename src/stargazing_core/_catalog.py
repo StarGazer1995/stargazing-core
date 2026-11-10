@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import threading
+from functools import lru_cache
 from importlib import resources
 from typing import Any, Optional
 
@@ -77,6 +78,14 @@ def _load_data_resource(filename: str) -> list[dict[str, Any]]:
     """Read packaged JSON data from ``stargazing_core/data/``."""
     pkg = resources.files('stargazing_core')
     return json.loads((pkg / 'data' / filename).read_text(encoding='utf-8'))
+
+
+@lru_cache(maxsize=1)
+def _imaging_cluster_sizes() -> dict[str, dict[str, Any]]:
+    """Pinned OpenNGC optical extents for pure open clusters; see data notice."""
+    pkg = resources.files('stargazing_core')
+    data = json.loads((pkg / 'data' / 'imaging_cluster_sizes.json').read_text(encoding='utf-8'))
+    return data['objects']
 
 
 def load_objects() -> list[dict[str, Any]]:

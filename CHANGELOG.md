@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.3 (2026-11-10) — Shared equipment and imaging windows
+
+- Add the existing HOPE D60 + ASI2600MC Air setup to the shared preset catalog.
+- Rank imaging targets over astronomical-dark usable windows instead of requiring midnight/dawn visibility; remove visual magnitude limits from imaging.
+- Penalize oversized FOV coverage and short usable runs, and evaluate moon interference over each target’s usable samples.
+- Overlay pinned, attributed OpenNGC optical sizes for pure open clusters; retain the generic catalog and nebula extents.
+- Preserve public function signatures and result fields.
+
 ## 0.2.2 (2026-11-04) — Shooting-window time consistency
 
 - Preserve UTC instants for offset-aware shooting bounds instead of replacing their timezone.
