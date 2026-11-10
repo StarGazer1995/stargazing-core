@@ -83,4 +83,4 @@ __all__ = [
     'render_weather_tile',
     'weather_tile_bounds',
 ]
-__version__ = '0.2.2'
+__version__ = '0.2.3'

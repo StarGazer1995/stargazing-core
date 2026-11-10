@@ -225,7 +225,8 @@ def _score_fov_fit(
 
     - < 1% fill → near 0 (too small for detail)
     - 10%–60% fill → 1.0 (ideal)
-    - > 60% fill → stays at 1.0 (Phase 4 mosaic handles large targets)
+    - Oversized axes reduce the score by the required rectangular coverage.
+    - Sensor rotation is allowed when comparing major/minor extents.
     """
     if maj_arcmin is None or maj_arcmin <= 0:
         return 0.0
@@ -240,10 +241,10 @@ def _score_fov_fit(
     obj_area_sq_deg = math.pi * a_deg * b_deg
     fill_ratio = obj_area_sq_deg / fov_area_sq_deg
 
-    if fill_ratio >= 0.10:
-        return 1.0
-    # Linear ramp: 0% → 0.0, 10% → 1.0
-    return fill_ratio / 0.10
+    sensor_long, sensor_short = sorted((fov_width_deg, fov_height_deg), reverse=True)
+    target_long, target_short = sorted((2 * a_deg, 2 * b_deg), reverse=True)
+    coverage = max(1.0, target_long / sensor_long) * max(1.0, target_short / sensor_short)
+    return min(1.0, fill_ratio / 0.10) / coverage
 
 
 def _score_filter_match(obj_type: str, filter_type: str | None) -> float:
@@ -255,6 +256,21 @@ def _score_filter_match(obj_type: str, filter_type: str | None) -> float:
         'GlC': 'globular cluster',
         'G': 'galaxy',
         'Gx': 'galaxy',
+        'AGN': 'galaxy',
+        'SyG': 'galaxy',
+        'Sy1': 'galaxy',
+        'Sy2': 'galaxy',
+        'GiG': 'galaxy',
+        'GiP': 'galaxy',
+        'GiC': 'galaxy',
+        'LIN': 'galaxy',
+        'BLL': 'galaxy',
+        'SBG': 'galaxy',
+        'H2G': 'galaxy',
+        'PaG': 'galaxy',
+        'IG': 'galaxy',
+        'rG': 'galaxy',
+        'EmG': 'galaxy',
         'HII': 'emission nebula',
         'RNe': 'reflection nebula',
         'PN': 'planetary nebula',
@@ -265,6 +281,40 @@ def _score_filter_match(obj_type: str, filter_type: str | None) -> float:
         if key in obj_lower:
             return score
     return _FALLBACK_FILTER_SCORE
+
+
+def _imaging_catalog(objects: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Keep valid coordinates without visual-only NGC magnitude or midnight gates."""
+    from ._catalog import _imaging_cluster_sizes
+
+    cluster_sizes = _imaging_cluster_sizes()
+    result = []
+    for obj in objects:
+        try:
+            ra, dec = float(obj['ra']), float(obj['dec'])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not (math.isfinite(ra) and math.isfinite(dec) and -90 <= dec <= 90):
+            continue
+        obj = {**obj, '_ra': ra, '_dec': dec}
+        size = cluster_sizes.get(obj.get('name', ''))
+        if size is not None:
+            obj.update(
+                angular_size_maj_arcmin=size['major_arcmin'],
+                angular_size_min_arcmin=size['minor_arcmin'],
+                angular_size_pa_deg=None,
+            )
+        result.append(obj)
+    return result
+
+
+def _longest_window_minutes(mask: np.ndarray, step_minutes: float = 15.0) -> float:
+    """Conservative duration: both endpoints of each sampled interval must pass."""
+    longest = run = 0
+    for usable in mask:
+        run = run + 1 if usable else 0
+        longest = max(longest, run)
+    return max(0, longest - 1) * step_minutes
 
 
 def match_telescope_targets(
@@ -289,7 +339,7 @@ def match_telescope_targets(
     """
     # Lazy imports to avoid circular deps at module level
     from ._catalog import load_objects
-    from ._moon import calculate_moon_info, get_moon_altaz
+    from ._moon import calculate_moon_info
 
     optics = config.compute_optics()
 
@@ -359,32 +409,11 @@ def match_telescope_targets(
 
     civil_midnight = civil_dusk + (civil_dawn - civil_dusk) / 2.0
 
-    # ── Stage 1: coarse filtering (LST at civil midnight) ───────────
-    lst_deg = civil_midnight.sidereal_time('mean', longitude=observer.lon).deg
+    # Imaging considers the full catalog. A midnight-only or dawn-only gate
+    # would remove targets with perfectly usable early/late-night windows.
     all_objects = load_objects()
-    candidates = filter_candidates_by_lst(all_objects, lst_deg)
-
-    # Build name→object index for O(1) lookup in Stage 3
-    _object_index: dict[str, dict[str, Any]] = {o['name']: o for o in all_objects}
-
-    # ── Stage 2: moon + alt/az base scoring at midnight ─────────────
+    base_scored = _imaging_catalog(all_objects)
     moon_info = calculate_moon_info(civil_midnight)
-    moon_alt, moon_az = get_moon_altaz(observer, civil_midnight.to_datetime())
-    moon_coord = SkyCoord(
-        moon_az * u.deg,
-        moon_alt * u.deg,
-        frame='altaz',
-        obstime=civil_midnight,
-        location=observer,
-    ).icrs
-
-    base_scored = score_deep_sky_objects(
-        candidates,
-        civil_midnight,
-        observer,
-        moon_coord,
-        moon_info['illumination'],
-    )
 
     # ── Altitude curves: 15-min steps from dusk to dawn ──────────────
     night_hours = (civil_dawn - civil_dusk).to(u.hour).value
@@ -394,11 +423,10 @@ def match_telescope_targets(
 
     # Moon altitude curve over the observation window (batch get_body + transform)
     moon_times = Time(list(curve_times))
-    moon_alts_arr = (
-        get_body('moon', moon_times)
-        .transform_to(AltAz(obstime=moon_times, location=observer))
-        .alt.deg
+    moon_positions = get_body('moon', moon_times, location=observer).transform_to(
+        AltAz(obstime=moon_times, location=observer)
     )
+    moon_alts_arr = moon_positions.alt.deg
     moon_curve = []
     moon_always_down = True
     moon_always_up = True
@@ -447,16 +475,7 @@ def match_telescope_targets(
     moon_down_count = sum(1 for p in moon_curve if p['alt'] <= 0)
     moon_dark_fraction = round(moon_down_count / max(len(moon_curve), 1), 2)
 
-    # ── Dynamic moon penalty: bright moon above horizon washes out the sky ──
-    # Penalty ∝ illumination × (fraction of night moon is up).
-    if not moon_always_down and moon_info['illumination'] > 0.3:
-        moon_penalty_factor = moon_info['illumination'] * (1 - moon_dark_fraction) * 0.25
-        for obj in base_scored:
-            obj['score'] = obj['score'] + moon_info['illumination'] * 5.0 * (1 - moon_dark_fraction)
-    else:
-        moon_penalty_factor = 0.0
-
-    # ── Stage 3: device-aware scoring at civil dusk ─────────────────
+    # ── Device-aware scoring over the astronomical-dark window ─────────────────
     dusk_frame = AltAz(obstime=civil_dusk, location=observer)
     dawn_frame = AltAz(obstime=civil_dawn, location=observer)
 
@@ -483,15 +502,31 @@ def match_telescope_targets(
     dusk_alts_all[_has_coord] = coords_stage3.transform_to(dusk_frame).alt.deg
     dawn_alts_all[_has_coord] = coords_stage3.transform_to(dawn_frame).alt.deg
 
-    # Pre-compute filter mask.
-    # Match the original NaN behaviour: ``mag > lim_mag`` is False for NaN,
-    # so NaN-magnitude objects pass the magnitude filter.  ``<=`` is also
-    # False for NaN, so we explicitly include NaN magnitudes.
+    # Require at least 30 continuous sampled minutes above 25 degrees in
+    # astronomical darkness. Keep civil bounds/curves for public compatibility.
+    curve_altitudes = np.empty((n_scored, len(curve_times)), dtype=np.float64)
+    curve_azimuths = np.empty(n_scored, dtype=np.float64)
+    sun_alts = (
+        get_sun(moon_times).transform_to(AltAz(obstime=moon_times, location=observer)).alt.deg
+    )
+    dark = sun_alts <= -18.0
+
+    moon_up = moon_positions.alt.deg > 0
+    usable = np.zeros_like(curve_altitudes, dtype=bool)
+    for j, frame in enumerate(curve_frames):
+        sky = coords_stage3.transform_to(frame)
+        curve_altitudes[:, j] = sky.alt.deg
+        usable[:, j] = (sky.alt.deg >= 25.0) & dark[j]
+        if moon_info['illumination'] > 0.1 and moon_up[j]:
+            usable[:, j] &= sky.separation(moon_positions[j]).deg >= 15.0
+    midnight_sky = coords_stage3.transform_to(AltAz(obstime=civil_midnight, location=observer))
+    curve_azimuths[:] = midnight_sky.az.deg
+    window_minutes = np.array([_longest_window_minutes(row) for row in usable])
     _mag_ok = np.ones(n_scored, dtype=bool)
-    if lim_mag is not None:
+    # Visual limiting magnitude is not an imaging exposure limit.
+    if lim_mag is not None and fov_w is None:
         _mag_ok = (_mag_arr <= lim_mag) | np.isnan(_mag_arr)
-    _dawn_ok = dawn_alts_all >= 20.0
-    _stage3_keep = _has_coord & _mag_ok & _dawn_ok
+    _stage3_keep = _has_coord & _mag_ok & (window_minutes >= 30.0)
 
     results: list[dict[str, Any]] = []
     for idx in np.flatnonzero(_stage3_keep):
@@ -500,38 +535,40 @@ def match_telescope_targets(
         dusk_alt_val = float(dusk_alts_all[idx])
         dawn_alt_val = float(dawn_alts_all[idx])
 
-        # --- find original catalog entry for angular size ---
-        orig = _object_index.get(obj['name'])
-        if orig is None:
-            continue
+        orig = obj
         maj = orig.get('angular_size_maj_arcmin')
         min_ = orig.get('angular_size_min_arcmin')
 
-        obj_type = obj['type']
+        obj_type = obj.get('type', '')
 
         # --- scores ---
         fov_fit = _score_fov_fit(maj, min_, fov_w or 0, fov_h or 0)
         sb = _calc_surface_brightness(mag, maj, min_)
         filter_score = _score_filter_match(obj_type, config.filter_type)
 
-        # --- hard filter: FOV too small for imaging ---
-        if maj is not None and fov_fit < 0.1:
-            continue
+        # Reject tiny targets, but retain oversized targets as mosaic options.
+        if maj is not None and fov_w and fov_h:
+            fill = math.pi * (maj / 120.0) * ((min_ or maj) / 120.0) / (fov_w * fov_h)
+            if fill < 0.01:
+                continue
 
         # Normalize surface brightness: typical range 10–25 mag/arcmin²
         sb_score = 0.0
         if sb is not None:
             sb_score = max(0.0, min(1.0, (25.0 - sb) / 15.0))
 
-        alt_score = obj['altitude'] / 90.0
+        alt_score = float(np.mean(curve_altitudes[idx, usable[idx]])) / 90.0
+        # Reward longer runs up to two hours without claiming SNR prediction.
+        window_factor = 0.5 + 0.5 * min(1.0, window_minutes[idx] / 120.0)
+        moon_penalty_factor = 0.0
+        if moon_info['illumination'] > 0.3:
+            moon_penalty_factor = (
+                moon_info['illumination'] * float(np.mean(moon_up[usable[idx]])) * 0.25
+            )
 
         total = (
-            fov_fit * 0.40
-            + sb_score * 0.30
-            + filter_score * 0.20
-            + alt_score * 0.10
-            - moon_penalty_factor
-        )
+            fov_fit * 0.40 + sb_score * 0.30 + filter_score * 0.20 + alt_score * 0.10
+        ) * window_factor - moon_penalty_factor
         total = max(total, 0.0)  # moon penalty can't push below zero
 
         # Mosaic recommended when the target's elliptical extent exceeds FOV
@@ -540,8 +577,8 @@ def match_telescope_targets(
         _fits_in_fov = (
             fov_w is not None
             and fov_h is not None
-            and _maj_deg <= fov_w * 1.2
-            and _min_deg <= fov_h * 1.2
+            and max(_maj_deg, _min_deg) <= max(fov_w, fov_h)
+            and min(_maj_deg, _min_deg) <= min(fov_w, fov_h)
         )
         mosaic_recommended = bool(maj and fov_w and not _fits_in_fov)
 
@@ -552,8 +589,8 @@ def match_telescope_targets(
         results.append(
             {
                 'name': obj['name'],
-                'ra': orig.get('ra') if orig else None,
-                'dec': orig.get('dec') if orig else None,
+                'ra': obj['_ra'],
+                'dec': obj['_dec'],
                 'type': obj_type,
                 'magnitude': mag if math.isfinite(mag) else None,
                 'surface_brightness': round(sb, 2) if sb is not None else None,
@@ -562,7 +599,7 @@ def match_telescope_targets(
                 'angular_size_pa_deg': orig.get('angular_size_pa_deg'),
                 'optimal_rotation_deg': _optimal_rot,
                 'altitude': round(dusk_alt_val, 1),  # altitude at dusk
-                'azimuth': obj['azimuth'],  # azimuth at midnight
+                'azimuth': round(float(curve_azimuths[idx]), 1),  # azimuth at midnight
                 'dawn_altitude': round(dawn_alt_val, 1),  # altitude at dawn
                 'fov_fill_ratio': round(
                     (math.pi * _maj_deg / 2.0 * _min_deg / 2.0) / (fov_w * fov_h),
@@ -577,7 +614,10 @@ def match_telescope_targets(
                 'suitability_score': round(total * 100, 1),
                 'mosaic_recommended': mosaic_recommended,
                 'catalog': obj.get('catalog', 'Unknown'),
-                'altitude_curve': [],  # computed after filtering (lazy, only for top-N)
+                'altitude_curve': [
+                    {'time': ct.utc.unix, 'alt': round(float(alt), 1)}
+                    for ct, alt in zip(curve_times, curve_altitudes[idx], strict=True)
+                ],
                 'observation_time': civil_dusk.isot,
                 'civil_dusk': civil_dusk.isot,
                 'civil_dawn': civil_dawn.isot,
@@ -590,27 +630,7 @@ def match_telescope_targets(
 
     top_targets = results[:limit]
 
-    # ── Compute altitude curves only for final top-N targets ──────
-    # Batch transform: one SkyCoord for all targets, then per-timestep
-    # transforms instead of per-target×per-step.  For 7 targets × 56
-    # steps this replaces 392 individual transform_to calls with 56
-    # batch calls (7 objects each).
     if top_targets:
-        top_ras = np.array([t['ra'] for t in top_targets], dtype=np.float64)
-        top_decs = np.array([t['dec'] for t in top_targets], dtype=np.float64)
-        coords_top = SkyCoord(ra=top_ras * u.deg, dec=top_decs * u.deg, frame='icrs')
-        for target in top_targets:
-            target['altitude_curve'] = []
-        for ct, cf in zip(curve_times, curve_frames, strict=True):
-            alts = coords_top.transform_to(cf).alt.deg
-            for i, target in enumerate(top_targets):
-                target['altitude_curve'].append(
-                    {
-                        'time': ct.utc.unix,
-                        'alt': round(float(alts[i]), 1),
-                    }
-                )
-
         # ── Detect rise / set / transit for each top-N target ─────────
         for target in top_targets:
             curve = target['altitude_curve']

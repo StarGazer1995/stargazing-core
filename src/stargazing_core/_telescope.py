@@ -165,6 +165,7 @@ TELESCOPE_PRESETS: dict[str, TelescopeConfig] = {
     'redcat71-asi2600': _mk(350, 23.5, 15.7, aperture=71, pixel=3.76),
     'askar-fma180-asi2600': _mk(180, 23.5, 15.7, aperture=40, pixel=3.76),
     'rokinon-135-asi2600': _mk(135, 23.5, 15.7, aperture=67.5, pixel=3.76),
+    'hope_d60_asi2600mc_air': _mk(280, 23.5, 15.7, aperture=60, pixel=3.76),
     # ── medium refractors ───────────────────────────────────────
     'askar-103apo-asi2600': _mk(700, 23.5, 15.7, aperture=103, pixel=3.76),
     'sharpstar-61edphii-asi533': _mk(275, 11.3, 11.3, aperture=61, pixel=3.76),

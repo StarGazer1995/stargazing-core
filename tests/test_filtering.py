@@ -4,8 +4,9 @@ import json
 import math
 
 import astropy.units as u
+import numpy as np
 import pytest
-from astropy.coordinates import EarthLocation, SkyCoord
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_sun
 from astropy.time import Time
 
 from stargazing_core import match_telescope_targets
@@ -178,9 +179,9 @@ def test_fov_fit_too_small():
 
 
 def test_fov_fit_large_mosaic():
-    """120 arcmin (2°) object in 1°×0.7° FOV → >100% fill → still 1.0."""
+    """Oversized targets incur a mosaic coverage cost."""
     score = _score_fov_fit(120, None, 1.0, 0.7)
-    assert score == 1.0
+    assert score == pytest.approx(0.175)
 
 
 def test_fov_fit_no_size():
@@ -307,9 +308,22 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     # Results sorted by suitability_score desc, then dawn_altitude asc
     scores = [x['suitability_score'] for x in targets]
     assert scores == sorted(scores, reverse=True), 'highest scores first'
-    # All dawn altitudes above filter threshold
-    dawn_alts = [x['dawn_altitude'] for x in targets]
-    assert all(a >= 20.0 for a in dawn_alts), 'all should pass dawn ≥20° filter'
+    # Every target has a continuous imaging window, regardless of dawn altitude.
+    from stargazing_core._filtering import _longest_window_minutes
+
+    for target in targets:
+        curve_times = Time([point['time'] for point in target['altitude_curve']], format='unix')
+        sun_alt = (
+            get_sun(curve_times)
+            .transform_to(
+                AltAz(obstime=curve_times, location=EarthLocation(lat=51.5 * u.deg, lon=0 * u.deg))
+            )
+            .alt.deg
+        )
+        usable = np.array([point['alt'] >= 25 for point in target['altitude_curve']]) & (
+            sun_alt <= -18
+        )
+        assert _longest_window_minutes(usable) >= 30
 
     # Verify new fields present and sane
     for key in ('dawn_altitude', 'observation_time', 'civil_dusk', 'civil_dawn'):
@@ -318,7 +332,7 @@ def test_match_telescope_targets_basic(redcat51_greenwich_jan2024):
     # FOV filter: objects with angular_size should have fov_fit_score >= 0.1
     for x in targets:
         if x['angular_size_arcmin'] is not None:
-            assert x['fov_fit_score'] >= 0.1, (
+            assert x['fov_fit_score'] > 0, (
                 x['name']
                 + ': fov_fit_score='
                 + str(x['fov_fit_score'])
@@ -346,98 +360,6 @@ def test_match_telescope_targets_empty_with_weak_scope():
     assert isinstance(result, dict)
     assert 'targets' in result
     assert isinstance(result['targets'], list)
-
-
-def test_match_telescope_targets_skips_orphan_object(monkeypatch):
-    """When a base_scored object's name doesn't match the catalog, it's skipped."""
-    from stargazing_core._filtering import score_deep_sky_objects as original_score
-    from stargazing_core._telescope import TELESCOPE_PRESETS
-
-    config = TELESCOPE_PRESETS['redcat51-asi2600']
-    observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
-    time = Time('2024-01-25T22:00:00')
-
-    def _patched_score(*args, **kwargs):
-        results = original_score(*args, **kwargs)
-        # Inject a fake object that won't exist in the full catalog
-        if results:
-            results.append(
-                {
-                    'name': '__FAKE_ORPHAN_OBJECT__',
-                    'type': 'galaxy',
-                    'magnitude': 8.0,
-                    'altitude': 45.0,
-                    'azimuth': 90.0,
-                    'catalog': 'FAKE',
-                    'score': 5.0,
-                }
-            )
-        return results
-
-    monkeypatch.setattr(
-        'stargazing_core._filtering.score_deep_sky_objects',
-        _patched_score,
-    )
-
-    result = match_telescope_targets(config, observer, time, limit=10)
-    # The fake object should be silently skipped; no crash
-    assert len(result['targets']) > 0
-    assert all('__FAKE_ORPHAN_OBJECT__' not in r['name'] for r in result['targets'])
-
-
-def test_match_telescope_targets_skips_bad_coord_in_catalog(monkeypatch):
-    """When a catalog entry has invalid ra/dec, the coord exception handler skips it."""
-    from stargazing_core._catalog import load_objects as original_load
-    from stargazing_core._filtering import score_deep_sky_objects as original_score
-    from stargazing_core._telescope import TELESCOPE_PRESETS
-
-    bad_name = '__BAD_COORD_OBJ__'
-
-    def _patched_load():
-        objs = list(original_load())
-        objs.append(
-            {
-                'name': bad_name,
-                'ra': 180.0,
-                'dec': 91.0,  # Invalid declination — triggers ValueError in SkyCoord
-                'type': 'galaxy',
-                'magnitude': 8.0,
-                'catalog': 'NGC',
-                'angular_size_maj_arcmin': 10.0,
-            }
-        )
-        return objs
-
-    def _patched_score(candidates, *args, **kwargs):
-        # Remove bad-coord object so original score_deep_sky_objects
-        # doesn't crash on SkyCoord(dec=91) (which is uncaught there).
-        clean = [c for c in candidates if c['name'] != bad_name]
-        results = original_score(clean, *args, **kwargs)
-        # Inject the bad object so it reaches Stage 3 and hits the
-        # coord exception handler we want to cover.
-        results.append(
-            {
-                'name': bad_name,
-                'type': 'galaxy',
-                'magnitude': 8.0,
-                'altitude': 45.0,
-                'azimuth': 90.0,
-                'catalog': 'NGC',
-                'score': 5.0,
-            }
-        )
-        return results
-
-    monkeypatch.setattr('stargazing_core._catalog.load_objects', _patched_load)
-    monkeypatch.setattr('stargazing_core._filtering.score_deep_sky_objects', _patched_score)
-
-    config = TELESCOPE_PRESETS['redcat51-asi2600']
-    observer = EarthLocation(lat=51.5 * u.deg, lon=0.0 * u.deg)
-    time = Time('2024-01-25T22:00:00')
-
-    result = match_telescope_targets(config, observer, time, limit=10)
-    # The bad-coord object should be silently skipped via the except handler
-    assert bad_name not in [r['name'] for r in result['targets']]
 
 
 def test_match_telescope_targets_moon_sets_during_night(redcat51_japan_feb2024):
@@ -494,3 +416,115 @@ def test_moon_penalty_skipped_when_moon_down():
     result = match_telescope_targets(config, observer, time, limit=10)
     assert len(result['targets']) >= 0  # should complete without error
     assert result['moon']['illumination'] <= 0.3
+
+
+@pytest.mark.parametrize(
+    'mask,minutes',
+    [
+        ([], 0),
+        ([True], 0),
+        ([True, True], 15),
+        ([True, True, True], 30),
+        ([True, True, False, True, True, True], 30),
+    ],
+)
+def test_longest_imaging_window_counts_intervals(mask, minutes):
+    from stargazing_core._filtering import _longest_window_minutes
+
+    assert _longest_window_minutes(np.array(mask)) == minutes
+
+
+def test_imaging_catalog_rejects_invalid_coordinates():
+    from stargazing_core._filtering import _imaging_catalog
+
+    invalid = [
+        {},
+        {'ra': None, 'dec': 0},
+        {'ra': 'bad', 'dec': 0},
+        {'ra': float('nan'), 'dec': 0},
+        {'ra': 0, 'dec': 91},
+    ]
+    good = {'name': 'valid', 'ra': '10', 'dec': '20', 'magnitude': 15, 'catalog': 'NGC'}
+    assert _imaging_catalog(invalid + [good]) == [{**good, '_ra': 10.0, '_dec': 20.0}]
+
+
+def test_imaging_keeps_early_late_and_faint_targets(monkeypatch):
+    import stargazing_core._catalog as catalog
+    import stargazing_core._moon as moon
+    from stargazing_core import TELESCOPE_PRESETS
+
+    objects = [
+        {'name': 'early', 'ra': 10.7, 'dec': 41.3},
+        {'name': 'late', 'ra': 220.0, 'dec': 20.0},
+        {'name': 'faint', 'ra': 83.8, 'dec': -5.4},
+    ]
+    for obj in objects:
+        obj.update(
+            type='HII',
+            magnitude=14.0,
+            catalog='NGC',
+            angular_size_maj_arcmin=60.0,
+            angular_size_min_arcmin=40.0,
+        )
+    monkeypatch.setattr(catalog, 'load_objects', lambda: objects)
+    monkeypatch.setattr(
+        moon, 'calculate_moon_info', lambda time: {'illumination': 0.0, 'phase_name': 'New Moon'}
+    )
+    result = match_telescope_targets(
+        TELESCOPE_PRESETS['hope_d60_asi2600mc_air'],
+        EarthLocation(lat=51.5 * u.deg, lon=0 * u.deg),
+        Time('2024-01-25T22:00:00'),
+        10,
+    )
+    by_name = {obj['name']: obj for obj in result['targets']}
+    assert set(by_name) == {'early', 'late', 'faint'}
+    assert by_name['early']['dawn_altitude'] < 20
+    assert by_name['late']['altitude'] < 20
+    assert all(obj['magnitude'] == 14 for obj in by_name.values())
+
+
+def test_fov_score_allows_camera_rotation_and_penalizes_long_axes():
+    assert _score_fov_fit(40, 20, 1, 0.5) == _score_fov_fit(40, 20, 0.5, 1)
+    assert _score_fov_fit(180, 5, 1, 0.5) < _score_fov_fit(40, 20, 1, 0.5)
+
+
+def test_visual_magnitude_gate_and_empty_imaging_catalog(monkeypatch):
+    import stargazing_core._catalog as catalog
+    import stargazing_core._moon as moon
+    from stargazing_core import TelescopeConfig
+
+    monkeypatch.setattr(
+        moon, 'calculate_moon_info', lambda time: {'illumination': 0, 'phase_name': 'New Moon'}
+    )
+    objects = [
+        {'name': 'bright', 'ra': 83.8, 'dec': -5.4, 'magnitude': 4},
+        {'name': 'faint', 'ra': 83.8, 'dec': -5.4, 'magnitude': 14},
+        {'name': 'unknown', 'ra': 83.8, 'dec': -5.4, 'magnitude': float('nan')},
+    ]
+    monkeypatch.setattr(catalog, 'load_objects', lambda: objects)
+    config = TelescopeConfig(focal_length_mm=280, aperture_mm=60)
+    observer = EarthLocation(lat=51.5 * u.deg, lon=0 * u.deg)
+    time = Time('2024-01-25T22:00:00')
+    assert {obj['name'] for obj in match_telescope_targets(config, observer, time)['targets']} == {
+        'bright',
+        'unknown',
+    }
+    monkeypatch.setattr(catalog, 'load_objects', lambda: [])
+    assert match_telescope_targets(config, observer, time)['targets'] == []
+
+
+def test_imaging_cluster_sizes_do_not_reuse_extended_membership_regions():
+    from stargazing_core import load_objects
+    from stargazing_core._filtering import _imaging_catalog
+
+    original = {obj['name']: obj for obj in load_objects()}
+    projected = {obj['name']: obj for obj in _imaging_catalog(list(original.values()))}
+    assert projected['M 36']['angular_size_maj_arcmin'] == 7.2
+    assert projected['NGC 2169']['angular_size_maj_arcmin'] == 7.2
+    assert projected['M 36']['angular_size_min_arcmin'] is None
+    assert original['M 36']['angular_size_maj_arcmin'] == 120.0
+    assert (
+        projected['IC 1396']['angular_size_maj_arcmin']
+        == original['IC 1396']['angular_size_maj_arcmin']
+    )
+    assert _score_filter_match('AGN', None) == _score_filter_match('galaxy', None)

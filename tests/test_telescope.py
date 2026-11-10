@@ -127,3 +127,12 @@ def test_effective_aperture_none_when_no_aperture():
 def test_preset_count():
     """We should have a reasonable number of presets."""
     assert len(TELESCOPE_PRESETS) >= 15
+
+
+def test_hope_preset_preserves_existing_mcp_optics():
+    cfg = TELESCOPE_PRESETS['hope_d60_asi2600mc_air']
+    assert cfg.focal_length_mm == 280
+    assert cfg.aperture_mm == 60
+    assert (cfg.sensor_width_mm, cfg.sensor_height_mm) == (23.5, 15.7)
+    assert cfg.sensor_pixel_size_um == 3.76
+    assert cfg.mount_type == 'equatorial'
